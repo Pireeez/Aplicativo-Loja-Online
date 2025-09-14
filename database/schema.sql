@@ -1,22 +1,45 @@
-CREATE TABLE Categorias(
-id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
-nome TEXT NOT NULL,
-nome_normalizado TEXT NOT NULL UNIQUE,
-status BOOLEAN
+-- CREATE TABLE Categorias(
+-- id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+-- nome TEXT NOT NULL,
+-- nome_normalizado TEXT NOT NULL UNIQUE,
+-- status BOOLEAN
+-- );
+
+-- DROP TABLE Categorias;
+DROP TABLE Produtos
+
+CREATE TABLE Produtos (
+id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
+id_categoria INTEGER NOT NULL,
+nome TEXT NOT NULL UNIQUE,
+descricao TEXT,
+preco REAL NOT NULL,
+estoque INTEGER NOT NULL,
+status BOOLEAN,
+imagem TEXT,
+FOREIGN KEY (id_categoria) REFERENCES Categorias (id_categoria) 
 );
 
-DROP TABLE Categorias;
+SELECT 
+p.id_produto, 
+p.nome, 
+p.descricao, 
+c.nome, 
+p.estoque, 
+p.status, 
+p.imagem 
+FROM Produtos p
+JOIN Categorias c ON c.id_categoria = p.id_categoria  
 
--- CREATE TABLE Produtos (
--- id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
--- id_categoria INTEGER,
--- nome TEXT NOT NULL,
--- descricao TEXT,
--- preco REAL NOT NULL,
--- estoque INTEGER,
--- status BOOLEAN,
--- FOREIGN KEY (id_categoria) REFERENCES Categorias (id_categoria) 
--- );
+INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem)
+VALUES ('Geladeira Brastemp', 
+        'A Geladeira Brastemp BRO85AK é sinônimo de inovação, com 554 litros de capacidade e classificação A+..',
+        1,
+        6359.00,
+        5,
+        0,
+        '/uploads/geladeira_brastemp.png'
+        )
 
 -- CREATE TABLE Pedidos (
 -- id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,

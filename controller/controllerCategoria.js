@@ -1,10 +1,11 @@
 const { runQuery, getQuery, allQuery } = require("../database/database-helper");
+const { formataNome } = require("../lib");
 const arrayColunas = ["nome", "status"];
 
 const createCategoria = async (req, res, next) => {
     try {
         const { nome, status } = req.body;
-        const nome_normalizado = normalizar(nome);
+        const nome_normalizado = formataNome(nome);
 
         if (!nome) {
             return res.status(400).json({
@@ -89,7 +90,7 @@ const updateCategoria = async (req, res, next) => {
                 status: 400,
             });
         }
-        const nome_normalizado = normalizar(body.nome);
+        const nome_normalizado = formataNome(body.nome);
         alteracao.push(`nome_normalizado = ?`);
         params.push(nome_normalizado, body.id_categoria);
 
@@ -122,13 +123,6 @@ const updateCategoria = async (req, res, next) => {
             message: "Aconteceu um probleminha no nosso servidor :(!",
         });
     }
-};
-
-const normalizar = (categoria) => {
-    return categoria
-        .toLowerCase()
-        .normalize("NFD") // separa acentos
-        .replace(/[\u0300-\u036f]/g, ""); // remove acentos
 };
 
 module.exports = { getAllCategoria, createCategoria, updateCategoria };
