@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@200&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="backoffice.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./frontCategoria.js" defer></script>
+    <title>Sistema de Gestão</title>
+</head>
+
+<body>
+    <div class="grid">
+
+        <header class="grid-header">
+            <nav class="list-cpp">
+                <h1 class="title-nav">Sistema de Gestão</h1>
+                <ul class="menu-backoffice">
+                    <li id="categorias" onclick="displayListCategoria()">Categoria</li>
+                    <li id="produtos" onclick="displayListProduto()">Produtos</li>
+                    <li id="pedidos">Pedidos</li>
+                </ul>
+            </nav>
+        </header>
+        <main class="grid-main">
+            <section class="categorias-conteiner">
+                <div class="categoria-header">
+                    <h2>Categoria</h2>
+                    <button id="btn-novaCategoria" onclick="displayNewCategoria()"><span id="more">+</span> Nova
+                        Categoria</button>
+                </div>
+                <div class="cateogira-data">
+                    <ul class="colums-line">
+                        <li id="categoria-id">ID</li>
+                        <li id="categoria-nome">Nome</li>
+                        <li id="categoria-status">Status</li>
+                        <li id="categoria-acoes">Ações</button>
+                    </ul>
+                    <div class="data">
+                    </div>
+                </div>
+
+            </section>
+
+
+            <section class="produtos-conteiner">
+
+            </section>
+
+            <section class="pedidos-conteiner">
+
+            </section>
+
+        </main>
+
+        <div class="overlay">
+            <div class="box-nova-Categoria">
+                <div class="box-top">
+                    <h3>Nova Categoria</h3>
+                    <p onclick="exitBox()">X</p>
+                </div>
+                <div class="box-nome">
+                    <h4>Nome</h4>
+                    <input id="input-nome" type="text" placeholder="Digite o nome da categoria">
+                </div>
+                <div class="box-status">
+                    <h4 id="box-new-categoria-status">Status: Invisível</h4>
+                    <label class="switch">
+                        <input type="checkbox" id="box-status-check">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn-create-categoria" onclick="sendNewCategoria()">Criar
+                    Categoria</button>
+            </div>
+        </div>
+
+        <div class="overlay-update">
+            <div class="box-nova-Categoria">
+                <div class="box-top">
+                    <h3>Editar Categoria</h3>
+                    <p onclick="exitBox()">X</p>
+                </div>
+                <div class="box-nome">
+                    <h4>Nome</h4>
+                    <p id="nome-categoria-edit"></p>
+                </div>
+                <div class="box-status">
+                    <h4 id="box-categoria-status">Status</h4>
+                    <label class="switch">
+                        <input type="checkbox" id="status-edit-check">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button id="btn-update-categoria" class="btn-create-categoria">Editar
+                    Categoria</button>
+            </div>
+        </div>
+
+        <div class="box-sucess" id="sucessBox">
+        </div>
+
+
+    </div>
+</body>
+
+</html>
