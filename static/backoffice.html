@@ -13,6 +13,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./frontCategoria.js" defer></script>
+    <script src="./frontProdutos.js" defer></script>
+    <script src="./frontPedidos.js" defer></script>
     <title>Sistema de Gestão</title>
 </head>
 
@@ -25,7 +27,7 @@
                 <ul class="menu-backoffice">
                     <li id="categorias" onclick="displayListCategoria()">Categoria</li>
                     <li id="produtos" onclick="displayListProduto()">Produtos</li>
-                    <li id="pedidos">Pedidos</li>
+                    <li id="pedidos" onclick="displayListPedido()">Pedidos</li>
                 </ul>
             </nav>
         </header>
@@ -46,15 +48,47 @@
                     <div class="data">
                     </div>
                 </div>
-
             </section>
 
-
             <section class="produtos-conteiner">
+                <div class="header">
+                    <h2>Produtos</h2>
+                    <button id="btn-novoProduto"><span id="more">+</span> Novo
+                        Produto</button>
+                </div>
+                <div class="container-data">
+                    <ul class="title-line">
+                        <li id="">ID</li>
+                        <li id="">Nome</li>
+                        <li id="">Descrição</li>
+                        <li id="">Categoria</li>
+                        <li id="">Preço</li>
+                        <li id="">Status</li>
+                        <li id="">Ações</li>
+                    </ul>
 
+                    <div class="data">
+                    </div>
+                </div>
             </section>
 
             <section class="pedidos-conteiner">
+                <div class="header">
+                    <h2>Pedidos</h2>
+                    <button id="btn-filtraPedido"><img src="./img/filterPedido.png"></button>
+
+                </div>
+                <div class="container-data">
+                    <ul class="title-line">
+                        <li id="">ID</li>
+                        <li id="">Data</li>
+                        <li id="">Qtde Itens</li>
+                        <li id="">Valor Total</li>
+                        <li id="">Detalhes</li>
+                    </ul>
+                    <div class="data">
+                    </div>
+                </div>
 
             </section>
 

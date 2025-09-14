@@ -1,5 +1,5 @@
 const conteinerCategoria = document.querySelector(".categorias-conteiner");
-const conteinerProduto = document.querySelector(".produtos-conteiner");
+
 const getListaCategoria = async () => {
     try {
         const data = await axios.get("/categoria").then((res) => res.data);
@@ -34,6 +34,8 @@ const updateCategoria = async (payload) => {
 const displayListCategoria = async () => {
     // Mostra o container
     conteinerCategoria.style.display = "block";
+    document.querySelector(".produtos-conteiner").style.display = "none";
+    document.querySelector(".pedidos-conteiner").style.display = "none";
 
     // Pega os dados da API
     const data = await getListaCategoria();
@@ -225,3 +227,5 @@ const boxMessage = (message) => {
         }, 500);
     }, 3000);
 };
+
+module.exports = { conteinerCategoria };
