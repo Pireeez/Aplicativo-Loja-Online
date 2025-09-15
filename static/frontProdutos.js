@@ -7,15 +7,6 @@ const getProdutos = async () => {
     }
 };
 
-const getCategoria = async () => {
-    try {
-        const data = axios.get('/categoria').then((res) => res.data);
-        return data;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
 const createProduto = async (formData) => {
     try {
         const data = await axios
@@ -35,7 +26,7 @@ const displayListProduto = async () => {
     document.querySelector('.produtos-conteiner').style.display = 'block';
     try {
         const data = await getProdutos();
-        const tbody = document.querySelector('.table tbody'); // seleciona o tbody real
+        const tbody = document.querySelector('.table tbody');
         tbody.innerHTML = '';
 
         data.forEach((item) => {
@@ -68,7 +59,7 @@ const displayListProduto = async () => {
             tbody.appendChild(tr);
 
             btnAction.addEventListener('click', () => {
-                console.log('olá');
+                console.log('eae ');
             });
         });
     } catch (error) {
@@ -79,15 +70,27 @@ const displayListProduto = async () => {
 const displayNewProduto = async () => {
     document.querySelector('.overlay-create-produto').style.display = 'flex';
     try {
-        const data = await getCategoria();
+        const data = await getListaCategoria();
         const select = document.querySelector('#list-select-categoria');
-
+        select.innerHTML = '';
+        const optionDefault = document.createElement('option');
+        optionDefault.disabled = true;
+        optionDefault.selected = true;
+        optionDefault.textContent = 'Selecione uma categoria';
+        select.appendChild(optionDefault);
         data.forEach((item) => {
             const option = document.createElement('option');
             option.textContent = item.nome;
             option.id = item.id_categoria;
             select.appendChild(option);
         });
+
+        const check = document.querySelector('#status-produto-check');
+        const statusView = document.querySelector('#box-produto-status');
+        check.addEventListener('click', () => {
+            statusView.textContent = `Status: ${formataStatus(check.checked)}`;
+        });
+
         const btnCeate = document.querySelector('#btn-new-produto');
         btnCeate.addEventListener('click', async () => {
             try {
@@ -105,17 +108,24 @@ const displayNewProduto = async () => {
                     categoria: Number(findCategoria.id_categoria),
                     preco: parseFloat(document.querySelector('#precoProduto').value),
                     estoque: Number(document.querySelector('#estoqueProduto').value),
-                    status: Boolean(document.querySelector('#status-produto-check').value),
-                    imagem: fileInput.files[0],
+                    status: Boolean(document.querySelector('#status-produto-check').value) || 0,
+                    imagem: fileInput.files[0] || null,
                 };
+                const msg = [];
                 for (key in dataMap) {
-                    if (key === 'nome' || key === 'preco') {
+                    if (key === 'nome' || key === 'preco' || key === 'estoque') {
                         if (!dataMap[key]) {
                             const name = document.querySelector(`#${key}Produto`);
                             name.style.border = '1px solid red';
                             name.addEventListener('input', () => (name.style.border = ''));
+                            msg.push(' ' + key);
                         }
-                        boxMessage(`O Campo ${key} é obrigatório`);
+                    }
+                    boxMessage(`O Campo ${msg} é obrigatório`);
+                    if (key === 'preco' || key === 'estoque') {
+                        if (dataMap[key] !== 'number') {
+                            boxMessage(`O campo: ${key} tem que ser númerico!`);
+                        }
                     }
                 }
 
@@ -126,11 +136,11 @@ const displayNewProduto = async () => {
 
                 const result = await createProduto(formData);
 
-                if (result.status) {
-                    return boxMessage(result.message);
+                if (result.status === 406 || result.status === 400) {
+                    boxMessage(result.message);
+                    exitBox();
+                    return;
                 }
-
-                console.log(result);
             } catch (error) {
                 console.log(error);
             }
@@ -139,80 +149,3 @@ const displayNewProduto = async () => {
         console.log(error);
     }
 };
-
-const limitaCaracter = (text) => {
-    if (text.length > 20) {
-        return (text = `${text.substring(0, 20)}...`);
-    }
-    return text;
-};
-
-const formataPreco = (preco) => {
-    preco = preco.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    });
-
-    return preco;
-};
-
-const formataStatus = (status) => {
-    if (status === 1) {
-        return (status = 'Visível');
-    }
-
-    if (status === 0) {
-        return (status = 'Invisível');
-    }
-};
-
-const formataCor = (statusCor) => {
-    if (statusCor === 'Visível') {
-        return 'status-color-green';
-    }
-
-    if (statusCor === 'Invisível') {
-        return 'status-color-red';
-    }
-};
-
-const dropArea = document.getElementById('drop-area');
-const fileInput = document.getElementById('fileElem');
-
-// Clicar na área abre o input
-dropArea.addEventListener('click', () => fileInput.click());
-
-// Seleção via input
-fileInput.addEventListener('change', () => {
-    handleFiles(fileInput.files);
-});
-
-// Arrastar sobre a área
-dropArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropArea.classList.add('hover');
-});
-
-// Sair da área sem soltar
-dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('hover');
-});
-
-// Soltar arquivos
-dropArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropArea.classList.remove('hover');
-    handleFiles(e.dataTransfer.files);
-});
-
-// Função interna para processar arquivo
-function handleFiles(files) {
-    for (const file of files) {
-        if (!file.type.startsWith('image/')) continue;
-
-        // Cria URL temporária para mostrar a imagem
-        const preview = document.getElementById('preview');
-        const imageURL = URL.createObjectURL(file);
-        preview.src = imageURL;
-    }
-}
