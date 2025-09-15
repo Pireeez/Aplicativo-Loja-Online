@@ -1,5 +1,4 @@
-const conteinerCategoria = document.querySelector('.categorias-conteiner');
-
+//Pega lista de categoria
 const getListaCategoria = async () => {
     try {
         const data = await axios.get('/categoria').then((res) => res.data);
@@ -9,6 +8,7 @@ const getListaCategoria = async () => {
     }
 };
 
+//cria nova categoria
 const createNewCategoria = async (payload) => {
     try {
         const data = await axios.post('/categoria', payload).then((res) => res.data);
@@ -18,6 +18,7 @@ const createNewCategoria = async (payload) => {
     }
 };
 
+//atualiza categoria
 const updateCategoria = async (payload) => {
     try {
         const data = await axios.patch('/categoria', payload).then((res) => res.data);
@@ -27,19 +28,23 @@ const updateCategoria = async (payload) => {
     }
 };
 
+//lista todas as categorias
 const displayListCategoria = async () => {
-    // Mostra o container
-    conteinerCategoria.style.display = 'block';
+    //mostra a tabela de categoria
+    document.querySelector('.categorias-conteiner').style.display = 'block';
     document.querySelector('.produtos-conteiner').style.display = 'none';
     document.querySelector('.pedidos-conteiner').style.display = 'none';
 
-    // Pega os dados da API
     try {
+        //chamada API pega lista de categorias
         const data = await getListaCategoria();
+
+        //se não existe nenhuma categoria exibe menssagem
         if (data.status === 404) {
             return boxMessage(data.message);
         }
 
+        //formatando e exibindo elementos da API na tabela
         const tbody = document.querySelector('.table tbody');
         tbody.innerHTML = '';
 
@@ -66,6 +71,7 @@ const displayListCategoria = async () => {
             tr.appendChild(tdAcoes);
             tbody.appendChild(tr);
 
+            //btn que inicia a ação para atualizar categoria
             btnAction.addEventListener('click', () => {
                 displayBoxUpdate(tr.children);
             });
@@ -75,36 +81,47 @@ const displayListCategoria = async () => {
     }
 };
 
+//exibe a tela de update
 const displayBoxUpdate = (ulChildren) => {
+    //pego informações da tabela
     const datahtml = [];
     for (let n of ulChildren) {
         datahtml.push(n.textContent);
     }
 
+    //crio um obj para aramazena o conteúdo de datahtml
     const obj = {
         id_categoria: Number(datahtml[0]) || null,
         nome: datahtml[1] || null,
         status: datahtml[2] || null,
     };
+
+    //exibo overlay de update categoria
     document.querySelector('#overlay-update-categoria').style.display = 'flex';
+
+    //declaro algumas variáveis de elementos html (nome, status, checkbox, btnUpdate)
     const nameInput = document.querySelector('#nome-categoria-edit');
     const statusEdit = document.querySelector('#box-categoria-status');
     const checkedEdit = document.querySelector('#status-edit-check');
     const btnUpdade = document.querySelector('#btn-update-categoria');
 
-    // Remove listeners antigos
+    //resetando os botões/inputs para garantir que não fiquem acumulando
+    //cloneNode cria uma cópia
+    //replaceWith substitiu o elemento original
     checkedEdit.replaceWith(checkedEdit.cloneNode(true));
     btnUpdade.replaceWith(btnUpdade.cloneNode(true));
 
-    // Seleciona de novo
+    //seleciona de novo
     const checkedEditNew = document.querySelector('#status-edit-check');
     const btnUpdadeNew = document.querySelector('#btn-update-categoria');
 
+    //adiciona as informações de exibição na tela update categoria
     nameInput.textContent = obj.nome;
     statusEdit.textContent = `Status: ${obj.status}`;
     checkedEditNew.checked = obj.status === 'Visível' ? 1 : 0;
     obj.status = checkedEditNew.checked;
 
+    //verifico o checkbox e atribuo a variável obj.status
     checkedEditNew.addEventListener('click', () => {
         if (checkedEditNew.checked) {
             statusEdit.textContent = `Status: Visível`;
@@ -115,14 +132,18 @@ const displayBoxUpdate = (ulChildren) => {
         }
     });
 
+    //btn que envia para api a nova atualização
     btnUpdadeNew.addEventListener('click', () => {
         sendUpdateCategoria(obj);
     });
 };
 
+//envia nova atualização para API
 const sendUpdateCategoria = async (payload) => {
     try {
         const data = await updateCategoria(payload);
+
+        //tratativa de status
         if (data.status === 200) {
             boxMessage(data.message);
             await displayListCategoria();
@@ -145,6 +166,7 @@ const sendUpdateCategoria = async (payload) => {
     }
 };
 
+//exibe o overlay de criação da nova categoria
 const displayNewCategoria = () => {
     document.querySelector('#overlay-create-categoria').style.display = 'flex';
     const checkStatus = document.querySelector('#box-status-check');
@@ -159,20 +181,26 @@ const displayNewCategoria = () => {
     });
 };
 
+//envia dados da nova categoria
 const sendNewCategoria = async () => {
+    //crio variáveis de elemento html (nome, status)
     const checkStatus = document.querySelector('#box-status-check');
     const inputName = document.querySelector('#input-nome');
+
     if (!inputName.value) {
         boxMessage('Digite um nome para a Categoria! ');
         inputName.style.border = '1px solid red';
         return;
     }
+
     const payload = {
         nome: inputName.value,
         status: checkStatus.checked,
     };
 
     const data = await createNewCategoria(payload);
+
+    //tratativa de erro
     if (data.status === 400) {
         boxMessage(data.message);
         inputName.style.border = '1px solid red';

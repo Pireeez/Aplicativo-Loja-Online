@@ -1,3 +1,4 @@
+//exitBox apaga todas as informações dos campos do overlay e fecha
 const exitBox = () => {
     // Esconde os overlays
     document.querySelector('#overlay-create-categoria').style.display = 'none';
@@ -21,8 +22,13 @@ const exitBox = () => {
         });
     const preview = document.querySelector('#preview');
     if (preview) preview.src = '';
+    //removo toda borda vermelha de input, textarea...
+    document.querySelectorAll('input, textarea, select').forEach((el) => {
+        el.style.border = '';
+    });
 };
 
+//boxMessage exibe mensagem de status
 const boxMessage = (message) => {
     const box = document.getElementById('sucessBox');
     box.classList.add('show');
@@ -35,6 +41,7 @@ const boxMessage = (message) => {
     }, 3000);
 };
 
+//limitaCaracter
 const limitaCaracter = (text) => {
     if (text.length > 20) {
         return (text = `${text.substring(0, 20)}...`);
@@ -42,6 +49,7 @@ const limitaCaracter = (text) => {
     return text;
 };
 
+//formata preço para REAL
 const formataPreco = (preco) => {
     preco = preco.toLocaleString('pt-BR', {
         style: 'currency',
@@ -51,6 +59,7 @@ const formataPreco = (preco) => {
     return preco;
 };
 
+//formata Status para visível ou invisível
 const formataStatus = (status) => {
     if (status === 1 || status === true) {
         return (status = 'Visível');
@@ -61,6 +70,7 @@ const formataStatus = (status) => {
     }
 };
 
+//formata cor de visível = green / invisível = red pela classname
 const formataCor = (statusCor) => {
     if (statusCor === 'Visível') {
         return 'status-color-green';

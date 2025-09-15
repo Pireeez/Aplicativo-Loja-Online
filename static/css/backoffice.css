@@ -50,8 +50,6 @@ h2 {
 }
 #btn-novaCategoria {
     box-shadow: none;
-    text-decoration: none;
-    outline: none;
     border: none;
     background-color: var(--btn-newCategoria);
     color: var(--font-btn);
@@ -76,7 +74,6 @@ h2 {
 .data ul {
     display: flex;
     align-items: center;
-    list-style: none;
     padding: 10px;
     margin: 0;
     border-bottom: 1px solid #f0f0f0;
