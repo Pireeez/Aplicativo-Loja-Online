@@ -81,37 +81,37 @@ const formataCor = (statusCor) => {
     }
 };
 
-//Pega arquivo de imagem e exibe na tela e converte para envio de dados//
+//pega arquivo de imagem e exibe na tela e converte para envio de dados
 const dropArea = document.getElementById('drop-area');
 const fileInput = document.getElementById('fileElem');
 
-// Clicar na área abre o input
+///clicar na área abre o input
 dropArea.addEventListener('click', () => fileInput.click());
 
-// Seleção via input
+//seleção via input
 fileInput.addEventListener('change', () => {
     handleFiles(fileInput.files);
 });
 
-// Arrastar sobre a área
+//srrastar sobre a área
 dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropArea.classList.add('hover');
 });
 
-// Sair da área sem soltar
+//sair da área sem soltar
 dropArea.addEventListener('dragleave', () => {
     dropArea.classList.remove('hover');
 });
 
-// Soltar arquivos
+//soltar arquivos
 dropArea.addEventListener('drop', (e) => {
     e.preventDefault();
     dropArea.classList.remove('hover');
     handleFiles(e.dataTransfer.files);
 });
 
-// Função interna para processar arquivo
+//função interna para processar arquivo
 function handleFiles(files) {
     for (const file of files) {
         if (!file.type.startsWith('image/')) continue;

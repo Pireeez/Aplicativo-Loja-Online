@@ -9,8 +9,8 @@
 //  Preço com máscara monetária "R$".
 
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
-const { formataNome } = require('../lib');
 const arrCampos = ['nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
+const arrCamposUpdate = ['id_produto', 'nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
 
 const createProdutos = async (req, res, next) => {
     try {
@@ -51,10 +51,7 @@ const createProdutos = async (req, res, next) => {
         if (dataCategoria.totalEstoque > 100) {
             return res.status(406).json({ message: 'Total de estoque excedido!', status: 406 });
         }
-        const verificaNome = await getQuery(
-            `SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`,
-            [nome]
-        );
+        const verificaNome = await getQuery(`SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`, [nome]);
 
         if (verificaNome.existeNome) {
             return res.status(406).json({
@@ -68,15 +65,7 @@ const createProdutos = async (req, res, next) => {
         const sql = `INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem)
         VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-        const data = await runQuery(sql, [
-            nome,
-            descricao,
-            categoria,
-            preco,
-            estoque,
-            status,
-            imagem,
-        ]);
+        const data = await runQuery(sql, [nome, descricao, categoria, preco, estoque, status, imagem]);
         if (data.changes !== 0) {
             res.status(201).json({
                 message: `Produto: ${nome} adicionado com sucesso!`,
@@ -111,4 +100,47 @@ const getAllProdutos = async (req, res, next) => {
     }
 };
 
-module.exports = { createProdutos, getAllProdutos };
+const updateProdutos = async (req, res, next) => {
+    try {
+        const bodyUpdate = req.body;
+        const alteracao = [];
+        const params = [];
+        const campos = [];
+        if (bodyUpdate.estoque > 100) {
+            return res.status(406).json({ message: 'Quantidade máxima de estoque é 100!', status: 406 });
+        }
+
+        if (!bodyUpdate.id_produto) {
+            return res.status(406).json({ message: 'É necessário informar o ID!', status: 400 });
+        }
+
+        if (typeof bodyUpdate.id_produto !== 'number') {
+            return res.status(406).json({ message: 'O ID tem que ser númerico', status: 400 });
+        }
+        for (key in bodyUpdate) {
+            if (key === 'id_produto') continue;
+            if (arrCamposUpdate.includes(key)) {
+                if (bodyUpdate[key] !== undefined || bodyUpdate[key] !== '' || bodyUpdate[key] !== null) {
+                    alteracao.push(`${key} = ?`);
+                    campos.push(key);
+                    params.push(bodyUpdate[key]);
+                }
+            }
+        }
+        params.push(bodyUpdate.id_produto);
+        if (alteracao.length === 0 || params.length === 0) {
+            return res.status(400).json({ message: `Nenhuma alteração realizada!`, status: 400 });
+        }
+
+        const sql = `UPDATE Produtos SET ${alteracao} WHERE id_produto = ?`;
+        const data = await runQuery(sql, params);
+        if (data.changes !== 0) {
+            return res.status(200).json({ message: `Campos: ${campos.join(', ')} alterado com sucesso!`, status: 200 });
+        }
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+module.exports = { createProdutos, getAllProdutos, updateProdutos };
