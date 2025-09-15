@@ -71,6 +71,8 @@ const displayNewProduto = async () => {
     document.querySelector('.overlay-create-produto').style.display = 'flex';
     try {
         const data = await getListaCategoria();
+
+        //cria lista de categorias
         const select = document.querySelector('#list-select-categoria');
         select.innerHTML = '';
         const optionDefault = document.createElement('option');
@@ -85,12 +87,14 @@ const displayNewProduto = async () => {
             select.appendChild(option);
         });
 
+        //customização do check do status
         const check = document.querySelector('#status-produto-check');
         const statusView = document.querySelector('#box-produto-status');
         check.addEventListener('click', () => {
             statusView.textContent = `Status: ${formataStatus(check.checked)}`;
         });
 
+        //botão que envia o novo produto
         const btnCeate = document.querySelector('#btn-new-produto');
         btnCeate.addEventListener('click', async () => {
             try {
@@ -112,21 +116,25 @@ const displayNewProduto = async () => {
                     imagem: fileInput.files[0] || null,
                 };
                 const msg = [];
-                for (key in dataMap) {
+                for (let key in dataMap) {
                     if (key === 'nome' || key === 'preco' || key === 'estoque') {
                         if (!dataMap[key]) {
-                            const name = document.querySelector(`#${key}Produto`);
-                            name.style.border = '1px solid red';
-                            name.addEventListener('input', () => (name.style.border = ''));
-                            msg.push(' ' + key);
+                            const campo = document.querySelector(`#${key}Produto`);
+                            campo.style.border = '1px solid red';
+                            campo.addEventListener('input', () => (campo.style.border = ''));
+                            msg.push(key);
                         }
                     }
-                    boxMessage(`O Campo ${msg} é obrigatório`);
-                    if (key === 'preco' || key === 'estoque') {
-                        if (dataMap[key] !== 'number') {
-                            boxMessage(`O campo: ${key} tem que ser númerico!`);
+                    if (key === 'estoque') {
+                        if (dataMap[key] <= 0) {
+                            return boxMessage('Estoque não pode ser 0 ou Negativo!');
                         }
                     }
+                }
+
+                if (msg.length > 0) {
+                    boxMessage(`Os campos ${msg.join(', ')} são obrigatórios`);
+                    return; // interrompe a função aqui
                 }
 
                 const formData = new FormData();
@@ -140,6 +148,8 @@ const displayNewProduto = async () => {
                     boxMessage(result.message);
                     exitBox();
                     return;
+                } else {
+                    boxMessage(result.message);
                 }
             } catch (error) {
                 console.log(error);
