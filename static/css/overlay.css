@@ -1,0 +1,150 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* fundo transparente */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* fica por cima de tudo */
+}
+
+/* Caixa do modal */
+.box-overlay {
+    background: white;
+    width: 400px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Animação de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Cabeçalho */
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.box-header p {
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.box-input {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+}
+
+/* status */
+.box-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+.box-overlay h4 {
+    margin: 5px 5px;
+}
+p {
+    margin-left: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+.box-overlay select {
+    width: 105%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #6a0dad; /* roxo */
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.btn-create-categoria {
+    box-shadow: none;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    background-color: var(--btn-newCategoria);
+    color: var(--font-btn);
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.btn-create-categoria:hover {
+    background-color: var(--btn-backgroundHover);
+    cursor: pointer;
+}

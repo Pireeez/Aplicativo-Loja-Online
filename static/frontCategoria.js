@@ -34,61 +34,45 @@ const displayListCategoria = async () => {
     document.querySelector('.pedidos-conteiner').style.display = 'none';
 
     // Pega os dados da API
-    const data = await getListaCategoria();
-
-    if (data.status === 404) {
-        return boxMessage(data.message);
-    }
-
-    const divDataCategoria = document.querySelector('.data');
-    // Limpa o container para não acumular dados
-    divDataCategoria.innerHTML = '';
-
-    // Remove duplicados baseado no id_categoria
-    const uniqueData = data.filter(
-        (item, index, self) => index === self.findIndex((t) => t.id_categoria === item.id_categoria)
-    );
-
-    uniqueData.forEach((obj) => {
-        const ul = document.createElement('ul');
-
-        // Cria li para cada chave do objeto
-        for (let key in obj) {
-            const li = document.createElement('li');
-            li.textContent = obj[key];
-
-            // Ajuste de status
-            if (key === 'status') {
-                if (obj[key] === true || obj[key] === '1' || obj[key] === 1) {
-                    li.className = 'status-visivel';
-                    li.textContent = 'Visível';
-                } else {
-                    li.className = 'status-invisivel';
-                    li.textContent = 'Invisível';
-                }
-            } else {
-                li.className = key;
-            }
-
-            ul.appendChild(li);
+    try {
+        const data = await getListaCategoria();
+        if (data.status === 404) {
+            return boxMessage(data.message);
         }
 
-        // Cria li apenas para o botão
-        const liAction = document.createElement('li');
-        const btnAction = document.createElement('img');
-        btnAction.src = './img/editSquare_categoria.png';
-        btnAction.className = 'btn-editCategoria';
+        const tbody = document.querySelector('.table tbody');
+        tbody.innerHTML = '';
 
-        btnAction.addEventListener('click', () => {
-            displayBoxUpdate(ul.children);
+        data.forEach((obj) => {
+            const tr = document.createElement('tr');
+
+            for (let key in obj) {
+                const td = document.createElement('td');
+                td.textContent = obj[key];
+                if (key === 'status') {
+                    td.textContent = formataStatus(obj[key]);
+                    td.className = formataCor(td.textContent);
+                } else {
+                    td.className = key;
+                }
+                tr.appendChild(td);
+            }
+
+            const tdAcoes = document.createElement('td');
+            const btnAction = document.createElement('img');
+            btnAction.src = './img/editSquare_categoria.png';
+            btnAction.className = 'btn-edit';
+            tdAcoes.appendChild(btnAction);
+            tr.appendChild(tdAcoes);
+            tbody.appendChild(tr);
+
+            btnAction.addEventListener('click', () => {
+                displayBoxUpdate(tr.children);
+            });
         });
-
-        liAction.appendChild(btnAction);
-        ul.appendChild(liAction);
-
-        // Adiciona o ul no container
-        divDataCategoria.appendChild(ul);
-    });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const displayBoxUpdate = (ulChildren) => {
@@ -96,12 +80,13 @@ const displayBoxUpdate = (ulChildren) => {
     for (let n of ulChildren) {
         datahtml.push(n.textContent);
     }
+
     const obj = {
         id_categoria: Number(datahtml[0]) || null,
         nome: datahtml[1] || null,
         status: datahtml[2] || null,
     };
-    document.querySelector('.overlay-update').style.display = 'flex';
+    document.querySelector('#overlay-update-categoria').style.display = 'flex';
     const nameInput = document.querySelector('#nome-categoria-edit');
     const statusEdit = document.querySelector('#box-categoria-status');
     const checkedEdit = document.querySelector('#status-edit-check');
@@ -161,7 +146,7 @@ const sendUpdateCategoria = async (payload) => {
 };
 
 const displayNewCategoria = () => {
-    document.querySelector('.overlay').style.display = 'flex';
+    document.querySelector('#overlay-create-categoria').style.display = 'flex';
     const checkStatus = document.querySelector('#box-status-check');
     const status = document.querySelector('#box-new-categoria-status');
 

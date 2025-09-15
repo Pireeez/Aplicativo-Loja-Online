@@ -1,0 +1,37 @@
+/*------------------- box message-------------------------------*/
+/* Fundo escuro atrás do modal */
+
+.box-sucess {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 200px;
+    text-align: center;
+
+    position: fixed;
+    top: -80px; /* começa fora da tela */
+    left: 50%;
+    transform: translateX(-50%);
+
+    opacity: 0;
+    transition: opacity 0.2s ease, top 0.2s ease;
+    z-index: 9999;
+}
+
+/* quando ativo */
+.box-sucess.show {
+    top: 20px; /* desce e aparece */
+    opacity: 1;
+}
+#create-sucess {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/*---------------------------------------------------------------------------*/

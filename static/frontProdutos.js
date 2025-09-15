@@ -26,7 +26,7 @@ const displayListProduto = async () => {
     document.querySelector('.produtos-conteiner').style.display = 'block';
     try {
         const data = await getProdutos();
-        const tbody = document.querySelector('.table tbody');
+        const tbody = document.querySelector('.produtos-conteiner .table tbody');
         tbody.innerHTML = '';
 
         data.forEach((item) => {
@@ -34,7 +34,6 @@ const displayListProduto = async () => {
 
             for (key in item) {
                 if (key === 'imagem') continue;
-
                 const td = document.createElement('td');
 
                 if (key === 'nome' || key === 'descricao') {
@@ -54,12 +53,13 @@ const displayListProduto = async () => {
             const tdAcoes = document.createElement('td');
             const btnAction = document.createElement('img');
             btnAction.src = './img/editSquare_categoria.png';
+            btnAction.className = 'btn-edit';
             tdAcoes.appendChild(btnAction);
             tr.appendChild(tdAcoes);
             tbody.appendChild(tr);
 
             btnAction.addEventListener('click', () => {
-                displayUpdateProduto(item, data);
+                displayUpdateProduto(item);
             });
         });
     } catch (error) {
@@ -68,7 +68,7 @@ const displayListProduto = async () => {
 };
 
 const displayNewProduto = async () => {
-    document.querySelector('.overlay-create-produto').style.display = 'flex';
+    document.querySelector('#overlay-create-produto').style.display = 'flex';
     try {
         const data = await getListaCategoria();
 
@@ -161,8 +161,8 @@ const displayNewProduto = async () => {
     }
 };
 
-const displayUpdateProduto = (item, dataCategoria) => {
-    document.querySelector('.overlay-update-produto').style.display = 'flex';
+const displayUpdateProduto = (item) => {
+    document.querySelector('#overlay-update-produto').style.display = 'flex';
     const dataMapUpdate = {
         '#nomeUpdateProduto': item.nome,
         '#descricaoUpdateProduto': item.descricao,

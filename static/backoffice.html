@@ -9,7 +9,11 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@200&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="backoffice.css">
+    <link rel="stylesheet" href="./css/backoffice.css">
+    <link rel="stylesheet" href="./css/overlay.css">
+    <link rel="stylesheet" href="./css/boxMessage.css">
+    <link rel="stylesheet" href="./css/dropArea.css">
+    <link rel="stylesheet" href="./css/header.css">
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./frontCategoria.js" defer></script>
@@ -36,26 +40,32 @@
             <section class="categorias-conteiner">
                 <div class="categoria-header">
                     <h2>Categoria</h2>
-                    <button id="btn-novaCategoria" onclick="displayNewCategoria()"><span id="more">+</span> Nova
-                        Categoria</button>
+                    <button id="btn-novaCategoria" onclick="displayNewCategoria()">
+                        <span id="more">+</span> Nova Categoria
+                    </button>
                 </div>
-                <div class="cateogira-data">
-                    <ul class="colums-line">
-                        <li id="categoria-id">ID</li>
-                        <li id="categoria-nome">Nome</li>
-                        <li id="categoria-status">Status</li>
-                        <li id="categoria-acoes">Ações</button>
-                    </ul>
-                    <div class="data">
-                    </div>
+                <div class="container-data">
+                    <table class="table">
+                        <thead>
+                            <tr class="title-line">
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
             <section class="produtos-conteiner">
                 <div class="header">
                     <h2>Produtos</h2>
-                    <button id="btn-novoProduto" onclick="displayNewProduto()"><span id="more">+</span> Novo
-                        Produto</button>
+                    <button id="btn-novoProduto" onclick="displayNewProduto()">
+                        <span id="more">+</span> Novo Produto
+                    </button>
                 </div>
                 <div class="container-data">
                     <table class="table">
@@ -72,7 +82,6 @@
                             </tr>
                         </thead>
                         <tbody>
-
                         </tbody>
                     </table>
                 </div>
@@ -96,13 +105,14 @@
                 </div>
             </section>
         </main>
-        <div class="overlay">
-            <div class="box-nova-Categoria">
-                <div class="box-top">
+
+        <div id="overlay-create-categoria" class="overlay">
+            <div class="box-overlay">
+                <div class="box-header">
                     <h3>Nova Categoria</h3>
                     <p onclick="exitBox()">X</p>
                 </div>
-                <div class="box-nome">
+                <div class="box-input">
                     <h4>Nome</h4>
                     <input id="input-nome" type="text" placeholder="Digite o nome da categoria">
                 </div>
@@ -118,13 +128,13 @@
             </div>
         </div>
 
-        <div class="overlay-update">
-            <div class="box-nova-Categoria">
-                <div class="box-top">
+        <div id="overlay-update-categoria" class="overlay">
+            <div class="box-overlay">
+                <div class="box-header">
                     <h3>Editar Categoria</h3>
                     <p onclick="exitBox()">X</p>
                 </div>
-                <div class="box-nome">
+                <div class="box-input">
                     <h4>Nome</h4>
                     <p id="nome-categoria-edit"></p>
                 </div>
@@ -140,13 +150,13 @@
             </div>
         </div>
 
-        <div class="overlay-create-produto">
-            <div class="box-nova-Categoria">
-                <div class="box-top">
+        <div id="overlay-create-produto" class="overlay">
+            <div class="box-overlay">
+                <div class="box-header">
                     <h3>Novo Produto</h3>
                     <p onclick="exitBox()">X</p>
                 </div>
-                <div class="box-nome">
+                <div class="box-input">
                     <h4>Nome</h4>
                     <input id="nomeProduto" type="text" placeholder="Digite o nome do produto">
                     <h4>Descrição</h4>
@@ -179,13 +189,13 @@
             </div>
         </div>
 
-        <div class="overlay-update-produto">
-            <div class="box-nova-Categoria">
-                <div class="box-top">
+        <div id="overlay-update-produto" class="overlay">
+            <div class="box-overlay">
+                <div class="box-header">
                     <h3>Editar Produto</h3>
                     <p onclick="exitBox()">X</p>
                 </div>
-                <div class="box-nome">
+                <div class="box-input">
                     <h4>Nome</h4>
                     <input id="nomeUpdateProduto" type="text">
                     <h4>Descrição</h4>
@@ -211,7 +221,6 @@
                 <button id="btn-update-produto" class="btn-create-categoria">Salvar Alterações</button>
             </div>
         </div>
-
 
         <div class="box-sucess" id="sucessBox">
         </div>
