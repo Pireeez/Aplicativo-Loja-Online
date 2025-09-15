@@ -15,6 +15,7 @@
     <script src="./frontCategoria.js" defer></script>
     <script src="./frontProdutos.js" defer></script>
     <script src="./frontPedidos.js" defer></script>
+    <script src="./libFront.js" defer></script>
     <title>Sistema de Gestão</title>
 </head>
 
@@ -53,7 +54,7 @@
             <section class="produtos-conteiner">
                 <div class="header">
                     <h2>Produtos</h2>
-                    <button id="btn-novoProduto"><span id="more">+</span> Novo
+                    <button id="btn-novoProduto" onclick="displayNewProduto()"><span id="more">+</span> Novo
                         Produto</button>
                 </div>
                 <div class="container-data">
@@ -152,34 +153,34 @@
                 </div>
                 <div class="box-nome">
                     <h4>Nome</h4>
-                    <input type="text">
+                    <input id="nomeProduto" type="text" placeholder="Digite o nome do produto">
                     <h4>Descrição</h4>
-                    <input type="text">
+                    <input id="descricaoProduto" type="text" placeholder="Digite a descrição do produto">
                     <h4>Categoria</h4>
-                    <select>
-                        <option value="" disabled selected>Selecione uma categoria</option>
+                    <select id="list-select-categoria">
+                        <option disabled selected>Selecione uma categoria</option>
                     </select>
                     <h4>Preco</h4>
-                    <input type="number" placeholder="R$ 0,00">
+                    <input id="precoProduto" type="number" placeholder="R$ 0,00">
                     <h4>Estoque</h4>
-                    <input type="number">
+                    <input id="estoqueProduto" type="number" placeholder="0">
                 </div>
                 <div class="box-status">
                     <h4 id="box-categoria-status">Status</h4>
                     <label class="switch">
-                        <input type="checkbox" id="status-edit-check">
+                        <input type="checkbox" id="status-produto-check">
                         <span class="slider"></span>
                     </label>
                 </div>
                 <h4>Imagem</h4>
                 <div class="drop-area" id="drop-area">
-
                     <p>Arraste e solte sua imagem aqui<br>ou clique para selecionar</p>
-                    <input type="file" id="fileElem" accept="image/*" style="display:none">
+                    <input type="file" id="fileElem" accept="image/*">
                 </div>
+                <img id="preview">
 
-                <button id="btn-update-categoria" class="btn-create-categoria">Editar
-                    Categoria</button>
+                <button id="btn-new-produto" class="btn-create-categoria">Criar
+                    Produto</button>
             </div>
         </div>
 

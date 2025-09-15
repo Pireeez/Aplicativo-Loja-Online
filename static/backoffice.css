@@ -218,9 +218,18 @@ h2 {
     align-items: center;
     margin-top: 15px;
 }
+.box-nova-Categoria h4 {
+    margin: 5px 5px;
+}
 
-input[type="text"] {
+input {
     width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+.box-nova-Categoria select {
+    width: 105%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -454,6 +463,7 @@ input:checked + .slider:before {
 }
 
 .drop-area {
+    margin-top: 10px;
     border: 2px dashed #ccc;
     border-radius: 10px;
     width: 100%;
@@ -466,7 +476,29 @@ input:checked + .slider:before {
     transition: background-color 0.3s, border-color 0.3s;
 }
 
+.drop-area input {
+    display: none;
+}
+
 .drop-area.hover {
     background-color: #f0f0f0;
     border-color: #333;
+}
+
+.overlay-create-produto {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* fundo transparente */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* fica por cima de tudo */
+}
+
+#preview {
+    max-width: 200px;
+    margin-top: 10px;
 }
