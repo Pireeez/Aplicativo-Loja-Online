@@ -227,5 +227,3 @@ const boxMessage = (message) => {
         }, 500);
     }, 3000);
 };
-
-module.exports = { conteinerCategoria };

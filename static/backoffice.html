@@ -57,18 +57,23 @@
                         Produto</button>
                 </div>
                 <div class="container-data">
-                    <ul class="title-line">
-                        <li id="">ID</li>
-                        <li id="">Nome</li>
-                        <li id="">Descrição</li>
-                        <li id="">Categoria</li>
-                        <li id="">Preço</li>
-                        <li id="">Status</li>
-                        <li id="">Ações</li>
-                    </ul>
+                    <table class="table">
+                        <thead>
+                            <tr class="title-line">
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                    <div class="data">
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -80,12 +85,13 @@
                 </div>
                 <div class="container-data">
                     <ul class="title-line">
-                        <li id="">ID</li>
-                        <li id="">Data</li>
-                        <li id="">Qtde Itens</li>
-                        <li id="">Valor Total</li>
-                        <li id="">Detalhes</li>
+                        <li>ID</li>
+                        <li>Data</li>
+                        <li>Qtde Itens</li>
+                        <li>Valor Total</li>
+                        <li>Detalhes</li>
                     </ul>
+
                     <div class="data">
                     </div>
                 </div>
@@ -133,6 +139,45 @@
                         <span class="slider"></span>
                     </label>
                 </div>
+                <button id="btn-update-categoria" class="btn-create-categoria">Editar
+                    Categoria</button>
+            </div>
+        </div>
+
+        <div class="overlay-create-produto">
+            <div class="box-nova-Categoria">
+                <div class="box-top">
+                    <h3>Novo Produto</h3>
+                    <p onclick="exitBox()">X</p>
+                </div>
+                <div class="box-nome">
+                    <h4>Nome</h4>
+                    <input type="text">
+                    <h4>Descrição</h4>
+                    <input type="text">
+                    <h4>Categoria</h4>
+                    <select>
+                        <option value="" disabled selected>Selecione uma categoria</option>
+                    </select>
+                    <h4>Preco</h4>
+                    <input type="number" placeholder="R$ 0,00">
+                    <h4>Estoque</h4>
+                    <input type="number">
+                </div>
+                <div class="box-status">
+                    <h4 id="box-categoria-status">Status</h4>
+                    <label class="switch">
+                        <input type="checkbox" id="status-edit-check">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <h4>Imagem</h4>
+                <div class="drop-area" id="drop-area">
+
+                    <p>Arraste e solte sua imagem aqui<br>ou clique para selecionar</p>
+                    <input type="file" id="fileElem" accept="image/*" style="display:none">
+                </div>
+
                 <button id="btn-update-categoria" class="btn-create-categoria">Editar
                     Categoria</button>
             </div>
