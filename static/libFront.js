@@ -3,6 +3,7 @@ const exitBox = () => {
     document.querySelector('.overlay').style.display = 'none';
     document.querySelector('.overlay-update').style.display = 'none';
     document.querySelector('.overlay-create-produto').style.display = 'none';
+    document.querySelector('.overlay-update-produto').style.display = 'none';
 
     // Limpa todos os inputs, textareas e selects dentro dos overlays
     document

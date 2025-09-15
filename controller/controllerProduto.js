@@ -8,27 +8,17 @@
 //  Estoque total por categoria ≤ 100.
 //  Preço com máscara monetária "R$".
 
-const { runQuery, getQuery, allQuery } = require("../database/database-helper");
-const { formataNome } = require("../lib");
-const arrCampos = [
-    "nome",
-    "descricao",
-    "categoria",
-    "preco",
-    "estoque",
-    "status",
-    "imagem",
-];
+const { runQuery, getQuery, allQuery } = require('../database/database-helper');
+const { formataNome } = require('../lib');
+const arrCampos = ['nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
 
 const createProdutos = async (req, res, next) => {
     try {
-        let { nome, descricao, categoria, preco, estoque, status, imagem } =
-            req.body;
+        let { nome, descricao, categoria, preco, estoque, status, imagem } = req.body;
         for (key in req.body) {
             if (!arrCampos.includes(key)) {
                 return res.status(400).json({
-                    message:
-                        "Não foi possível adicionar produto pois esses campos não existem",
+                    message: 'Não foi possível adicionar produto pois esses campos não existem',
                 });
             }
         }
@@ -42,27 +32,24 @@ const createProdutos = async (req, res, next) => {
         //campos obrigatório (preco, estoque) = null para caso tenha 0
         if (!nome || preco == null || estoque == null || !categoria) {
             return res.status(400).json({
-                message:
-                    "Os campos (nome, preco, estoque e categoria) são obrigatórios!",
+                message: 'Os campos (nome, preco, estoque e categoria) são obrigatórios!',
             });
         }
         //preco e estoque não podem ser valores negativos
         if (preco < 0 || estoque < 0) {
             return res.status(400).json({
-                message: "O preço e o estoque não podem ser negativos!",
+                message: 'O preço e o estoque não podem ser negativos!',
                 status: 400,
             });
         }
 
-        const totalEstoque = await getQuery(
+        const dataCategoria = await getQuery(
             `SELECT SUM(estoque) AS totalEstoque FROM Produtos WHERE id_categoria = ?`,
             [categoria]
         );
 
-        if (totalEstoque > 100) {
-            return res
-                .status(406)
-                .json({ message: "Total de estoque excedido!", status: 406 });
+        if (dataCategoria.totalEstoque > 100) {
+            return res.status(406).json({ message: 'Total de estoque excedido!', status: 406 });
         }
         const verificaNome = await getQuery(
             `SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`,
@@ -71,7 +58,7 @@ const createProdutos = async (req, res, next) => {
 
         if (verificaNome.existeNome) {
             return res.status(406).json({
-                message: "Esse produto já foi cadastrado!",
+                message: 'Esse produto já foi cadastrado!',
                 status: 406,
             });
         }
@@ -97,13 +84,13 @@ const createProdutos = async (req, res, next) => {
             });
         } else {
             res.status(400).json({
-                message: "Não foi possível adicionar esse Produto!",
+                message: 'Não foi possível adicionar esse Produto!',
             });
         }
     } catch (error) {
         next(error);
         res.status(500).json({
-            message: "Aconteceu um probleminha no nosso servidor =(",
+            message: 'Aconteceu um probleminha no nosso servidor =(',
         });
     }
 };
@@ -115,13 +102,11 @@ const getAllProdutos = async (req, res, next) => {
         if (data.length) {
             return res.status(200).json(data);
         } else {
-            return res
-                .status(404)
-                .json({ message: "Nenhum Produto existente!", status: 404 });
+            return res.status(404).json({ message: 'Nenhum Produto existente!', status: 404 });
         }
     } catch (error) {
         res.status(500).json({
-            message: "Aconteceu um probleminha no nosso servidor =(",
+            message: 'Aconteceu um probleminha no nosso servidor =(',
         });
     }
 };

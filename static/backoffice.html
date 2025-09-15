@@ -82,7 +82,6 @@
                 <div class="header">
                     <h2>Pedidos</h2>
                     <button id="btn-filtraPedido"><img src="./img/filterPedido.png"></button>
-
                 </div>
                 <div class="container-data">
                     <ul class="title-line">
@@ -92,15 +91,11 @@
                         <li>Valor Total</li>
                         <li>Detalhes</li>
                     </ul>
-
                     <div class="data">
                     </div>
                 </div>
-
             </section>
-
         </main>
-
         <div class="overlay">
             <div class="box-nova-Categoria">
                 <div class="box-top">
@@ -183,6 +178,40 @@
                     Produto</button>
             </div>
         </div>
+
+        <div class="overlay-update-produto">
+            <div class="box-nova-Categoria">
+                <div class="box-top">
+                    <h3>Editar Produto</h3>
+                    <p onclick="exitBox()">X</p>
+                </div>
+                <div class="box-nome">
+                    <h4>Nome</h4>
+                    <input id="nomeUpdateProduto" type="text">
+                    <h4>Descrição</h4>
+                    <input id="descricaoUpdateProduto" type="text">
+                    <h4>Categoria</h4>
+                    <select id="select-update">
+                        <option id="categoriaUpdateProduto"></option>
+                    </select>
+                    <h4>Preco</h4>
+                    <input id="precoUpdateProduto" type="number">
+                    <h4>Estoque</h4>
+                    <input id="estoqueUpdateProduto" type="number">
+                </div>
+                <div class="box-status">
+                    <h4 id="statusUpdateProduto">Status: Invisível</h4>
+                    <label class="switch">
+                        <input type="checkbox" id="status-update-produto-check">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <h4>Imagem</h4>
+                <img id="imagemUpdateProduto">
+                <button id="btn-update-produto" class="btn-create-categoria">Salvar Alterações</button>
+            </div>
+        </div>
+
 
         <div class="box-sucess" id="sucessBox">
         </div>

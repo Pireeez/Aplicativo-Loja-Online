@@ -59,7 +59,7 @@ const displayListProduto = async () => {
             tbody.appendChild(tr);
 
             btnAction.addEventListener('click', () => {
-                console.log('eae ');
+                displayUpdateProduto(item, data);
             });
         });
     } catch (error) {
@@ -143,10 +143,11 @@ const displayNewProduto = async () => {
                 }
 
                 const result = await createProduto(formData);
-
-                if (result.status === 406 || result.status === 400) {
+                console.log(result);
+                if (result.status === 406 || result.status === 201) {
                     boxMessage(result.message);
                     exitBox();
+                    displayListProduto();
                     return;
                 } else {
                     boxMessage(result.message);
@@ -158,4 +159,47 @@ const displayNewProduto = async () => {
     } catch (error) {
         console.log(error);
     }
+};
+
+const displayUpdateProduto = (item, dataCategoria) => {
+    document.querySelector('.overlay-update-produto').style.display = 'flex';
+    const dataMapUpdate = {
+        '#nomeUpdateProduto': item.nome,
+        '#descricaoUpdateProduto': item.descricao,
+        '#categoriaUpdateProduto': item.categoria,
+        '#precoUpdateProduto': item.preco,
+        '#estoqueUpdateProduto': item.estoque,
+        '#status-update-produto-check': item.status,
+        '#imagemUpdateProduto': item.imagem,
+    };
+    const select = document.querySelector('#select-update');
+    Object.entries(dataMapUpdate).forEach(async ([key, values]) => {
+        if (key === '#categoriaUpdateProduto') {
+            try {
+                select.innerHTML = '';
+                const opt = document.createElement('option');
+                opt.id = key;
+                opt.textContent = values;
+                select.appendChild(opt);
+                const data = await getListaCategoria();
+
+                data.forEach((element) => {
+                    const option = document.createElement('option');
+                    if (element.nome === values) return;
+                    option.textContent = element.nome;
+                    select.appendChild(option);
+                });
+                console.log(select);
+            } catch (error) {
+                console.log(error);
+            }
+        } else if (key === '#status-update-produto-check') {
+            document.querySelector(key).checked = values;
+            document.querySelector('#statusUpdateProduto').textContent = `Status: ${formataStatus(values)}`;
+        } else if (key === '#imagemUpdateProduto') {
+            document.querySelector(key).src = values;
+        } else {
+            document.querySelector(key).value = values;
+        }
+    });
 };
