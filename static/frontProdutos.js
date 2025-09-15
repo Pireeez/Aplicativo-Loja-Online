@@ -20,11 +20,13 @@ const createProduto = async (formData) => {
     }
 };
 
+//lista produto
 const displayListProduto = async () => {
     document.querySelector('.categorias-conteiner').style.display = 'none';
     document.querySelector('.pedidos-conteiner').style.display = 'none';
     document.querySelector('.produtos-conteiner').style.display = 'block';
     try {
+        //busco produtos
         const data = await getProdutos();
         const tbody = document.querySelector('.produtos-conteiner .table tbody');
         tbody.innerHTML = '';
@@ -71,7 +73,6 @@ const displayNewProduto = async () => {
     document.querySelector('#overlay-create-produto').style.display = 'flex';
     try {
         const data = await getListaCategoria();
-
         //cria lista de categorias
         const select = document.querySelector('#list-select-categoria');
         select.innerHTML = '';
@@ -96,6 +97,7 @@ const displayNewProduto = async () => {
 
         //botão que envia o novo produto
         const btnCeate = document.querySelector('#btn-new-produto');
+
         btnCeate.addEventListener('click', async () => {
             try {
                 const findCategoria = data.find((item) => item.nome === select.value);
@@ -176,27 +178,37 @@ const displayUpdateProduto = (item) => {
     Object.entries(dataMapUpdate).forEach(async ([key, values]) => {
         if (key === '#categoriaUpdateProduto') {
             try {
+                //exibo a categoria selecionada da lista de produto
                 select.innerHTML = '';
                 const opt = document.createElement('option');
                 opt.id = key;
                 opt.textContent = values;
                 select.appendChild(opt);
+
+                //busco api
                 const data = await getListaCategoria();
 
+                if (data.status === 404) {
+                    boxMessage(data.message);
+                    return;
+                }
+
+                //crio menu suspenso
                 data.forEach((element) => {
                     const option = document.createElement('option');
                     if (element.nome === values) return;
                     option.textContent = element.nome;
                     select.appendChild(option);
                 });
-                console.log(select);
             } catch (error) {
                 console.log(error);
             }
         } else if (key === '#status-update-produto-check') {
+            //mudo o status do checkbox
             document.querySelector(key).checked = values;
             document.querySelector('#statusUpdateProduto').textContent = `Status: ${formataStatus(values)}`;
         } else if (key === '#imagemUpdateProduto') {
+            //exibo imagem
             document.querySelector(key).src = values;
         } else {
             document.querySelector(key).value = values;

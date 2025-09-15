@@ -6,6 +6,6 @@ const { createProdutos, getAllProdutos, updateProdutos } = require('../controlle
 // Em vez de colocar a função de callback aqui, chamamos uma do controller
 router.post('/', upload.single('imagem'), createProdutos);
 router.get('/', getAllProdutos);
-router.patch('/', updateProdutos);
+router.patch('/', upload.single('imagem'), updateProdutos);
 
 module.exports = router;

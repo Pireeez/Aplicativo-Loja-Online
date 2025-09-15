@@ -137,7 +137,6 @@ const updateProdutos = async (req, res, next) => {
         if (data.changes !== 0) {
             return res.status(200).json({ message: `Campos: ${campos.join(', ')} alterado com sucesso!`, status: 200 });
         }
-        console.log(data);
     } catch (error) {
         console.log(error);
     }
