@@ -51,6 +51,8 @@ const createProdutos = async (req, res, next) => {
         if (dataCategoria.totalEstoque > 100) {
             return res.status(406).json({ message: 'Total de estoque excedido!', status: 406 });
         }
+
+        //trativa antes de iserir
         const verificaNome = await getQuery(`SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`, [nome]);
 
         if (verificaNome.existeNome) {
