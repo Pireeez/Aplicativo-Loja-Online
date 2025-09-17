@@ -1,26 +1,35 @@
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
-const { formataNome } = require('../lib');
-const arrayColunas = ['nome', 'status'];
+const { ApiError } = require('../errors/library');
+
+const arrayColunas = ['id_categoria', 'nome', 'status'];
 
 const createCategoria = async (req, res, next) => {
     try {
         const { nome, status } = req.body;
-        const nome_normalizado = formataNome(nome);
+
+        for (key in req.body) {
+            if (!arrayColunas.includes(key)) {
+                return next(ApiError('Não existe esse campo na nossa tabela!', 404));
+            }
+        }
+
+        if (typeof nome !== 'string' || typeof status !== 'boolean') {
+            return next(ApiError('Os tipos dos campos estão inválidos!', 400)); //i18n
+        }
 
         if (!nome) {
-            return res.status(400).json({
-                message: 'Digite um nome para a categoria!',
-                status: 400,
-            });
+            return next(ApiError('Digite um nome para a categoria!', 400));
         }
-        const sql = `INSERT INTO Categorias (nome, nome_normalizado, status) VALUES (?,?,?)`;
-        const data = await runQuery(sql, [nome, nome_normalizado, status]);
-        if (data.code === 'SQLITE_CONSTRAINT') {
-            return res.status(406).json({
-                message: 'O nome dessa categoria já existe!',
-                status: 406,
-            });
+
+        const verificaCategoria = await getQuery(`SELECT COUNT(*)AS nome FROM Categorias WHERE nome = ?`, nome);
+
+        if (verificaCategoria.nome !== 0) {
+            return next(ApiError('O nome dessa categoria já existe!', 406));
         }
+
+        const sql = `INSERT INTO Categorias (nome, status) VALUES (?,?)`;
+        const data = await runQuery(sql, [nome, status]);
+
         if (data.changes !== 0) {
             return res.status(201).json({
                 message: `Categoria ${nome} criada com suceso!`,
@@ -29,9 +38,6 @@ const createCategoria = async (req, res, next) => {
         }
     } catch (error) {
         next(error);
-        res.status(500).json({
-            message: 'Aconteceu um probleminha no nosso servidor =(',
-        });
     }
 };
 
@@ -43,13 +49,10 @@ const getAllCategoria = async (req, res, next) => {
         if (data.length) {
             return res.status(200).json(data);
         } else {
-            return res.status(404).json({ message: 'Nenhuma Categoria existente!', status: 404 });
+            return next(ApiError('Nenhuma Categoria existente!', 404));
         }
     } catch (error) {
         next(error);
-        res.status(500).json({
-            message: 'Aconteceu um probleminha no nosso servidor :(!',
-        });
     }
 };
 
@@ -59,48 +62,42 @@ const updateCategoria = async (req, res, next) => {
         const alteracao = [];
         const params = [];
 
+        console.log(body);
+
         for (key in body) {
+            if (key === 'status') {
+                if (typeof body[key] !== 'boolean') {
+                    return next(ApiError(`O valor do status tem que ser Visível ou Invisível`, 400));
+                }
+            }
+            if (key === 'id_categoria') continue;
             if (arrayColunas.includes(key)) {
                 if (body[key] !== undefined || body[key] !== '' || body[key] !== null) {
                     alteracao.push(`${key} = ?`);
                     params.push(body[key]);
                 } else {
-                    return res.status(404).json({
-                        message: `Não existe a categoria: ${body[key]} em nosso sistema!`,
-                        status: 404,
-                    });
+                    return next(ApiError(`Informe o valor do ${key}!`, 404));
                 }
+            } else {
+                return next(ApiError(`O campo ${key} não existe em nosso sistema`, 400));
             }
         }
+
+        params.push(body.id_categoria);
 
         const categoriaAtual = await getQuery('SELECT status FROM Categorias WHERE id_categoria = ?', [
             body.id_categoria,
         ]);
 
         if (Boolean(categoriaAtual.status) === body.status) {
-            return res.status(400).json({
-                message: 'Nenhuma atualização foi realizada na categoria!',
-                status: 400,
-            });
-        }
-        const nome_normalizado = formataNome(body.nome);
-        alteracao.push(`nome_normalizado = ?`);
-        params.push(nome_normalizado, body.id_categoria);
-
-        const sql = `UPDATE Categorias SET ${alteracao} WHERE id_categoria = ?`;
-        const data = await runQuery(sql, params);
-        if (data.code === 'SQLITE_CONSTRAINT') {
-            return res.status(406).json({
-                message: 'O nome da categoria já existe!',
-                status: 406,
-            });
+            return next(ApiError('Nenhuma atualização foi realizada na categoria!', 400));
         }
 
+        const data = await runQuery(`UPDATE Categorias SET ${alteracao} WHERE id_categoria = ?`, params);
+
+        console.log(data);
         if (data.changes === 0) {
-            return res.status(400).json({
-                message: 'Nenhuma atualização foi realizada na categoria!',
-                status: 400,
-            });
+            return next(ApiError('Nenhuma atualização foi realizada na categoria!', 400));
         }
 
         if (data.changes !== 0) {
@@ -111,10 +108,6 @@ const updateCategoria = async (req, res, next) => {
         }
     } catch (error) {
         next(error);
-
-        res.status(500).json({
-            message: 'Aconteceu um probleminha no nosso servidor :(!',
-        });
     }
 };
 

@@ -41,7 +41,7 @@ const displayListCategoria = async () => {
 
         //se não existe nenhuma categoria exibe menssagem
         if (data.status === 404) {
-            return boxMessage(data.message);
+            return boxMessage(data.message, data.status);
         }
 
         //formatando e exibindo elementos da API na tabela
@@ -145,19 +145,19 @@ const sendUpdateCategoria = async (payload) => {
 
         //tratativa de status
         if (data.status === 200) {
-            boxMessage(data.message);
+            boxMessage(data.message, data.status);
             await displayListCategoria();
             exitBox();
             return;
         }
         if (data.status === 400) {
-            boxMessage(data.message);
+            boxMessage(data.message, data.status);
             exitBox();
             return;
         }
 
         if (data.status === 406) {
-            boxMessage(data.message);
+            boxMessage(data.message, data.status);
             exitBox();
             return;
         }
@@ -202,17 +202,17 @@ const sendNewCategoria = async () => {
 
     //tratativa de erro
     if (data.status === 400) {
-        boxMessage(data.message);
+        boxMessage(data.message, data.status);
         inputName.style.border = '1px solid red';
         return;
     }
     if (data.status === 406) {
-        boxMessage(data.message);
+        boxMessage(data.message, data.status);
         inputName.style.border = '1px solid red';
         inputName.value = '';
     }
     if (data.status === 201) {
-        boxMessage(data.message);
+        boxMessage(data.message, data.status);
         exitBox();
         await displayListCategoria();
     }

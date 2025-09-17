@@ -1,11 +1,14 @@
--- CREATE TABLE Categorias(
--- id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
--- nome TEXT NOT NULL,
--- nome_normalizado TEXT NOT NULL UNIQUE,
--- status BOOLEAN
--- );
+CREATE TABLE Categorias(
+id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+nome TEXT NOT NULL UNIQUE,
+status BOOLEAN
+);
 
--- DROP TABLE Categorias;
+SELECT * FROM Categorias
+
+DROP TABLE Categorias;
+
+
 DROP TABLE Produtos
 
 CREATE TABLE Produtos (

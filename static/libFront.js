@@ -1,6 +1,7 @@
 //exitBox apaga todas as informações dos campos do overlay e fecha
 const exitBox = () => {
     // Esconde os overlays
+
     document.querySelector('#overlay-create-categoria').style.display = 'none';
     document.querySelector('#overlay-update-categoria').style.display = 'none';
     document.querySelector('#overlay-create-produto').style.display = 'none';
@@ -28,17 +29,32 @@ const exitBox = () => {
     });
 };
 
-//boxMessage exibe mensagem de status
-const boxMessage = (message) => {
+const exitBoxMessage = () => {
     const box = document.getElementById('sucessBox');
-    box.classList.add('show');
-    box.textContent = `${message}`;
+    box.classList.remove('show');
+    box.classList.remove();
+};
+
+//boxMessage exibe mensagem de status
+const boxMessage = (message, status) => {
+    const box = document.getElementById('sucessBox');
+    const msg = document.getElementById('exibe-message');
+    const boxs = document.querySelector('.box-sucess');
+
+    if (status === 201 || status === 200) {
+        box.classList.add('show');
+        boxs.classList.add('.sucess');
+        msg.textContent = `${message}`;
+    } else {
+        box.classList.add('show');
+        boxs.classList.add('.error');
+        msg.textContent = `${message}`;
+    }
+
     setTimeout(() => {
         box.classList.remove('show');
-        setTimeout(() => {
-            box.classList.remove();
-        }, 1000);
-    }, 3000);
+        box.classList.remove();
+    }, 10000);
 };
 
 //limitaCaracter
