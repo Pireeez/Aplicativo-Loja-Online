@@ -27,7 +27,7 @@ const displayListProduto = async () => {
     document.querySelector('.produtos-conteiner').style.display = 'block';
     try {
         //busco produtos
-        const data = await getProdutos();
+        const { data } = await getProdutos();
         const tbody = document.querySelector('.produtos-conteiner .table tbody');
         tbody.innerHTML = '';
 
@@ -72,7 +72,7 @@ const displayListProduto = async () => {
 const displayNewProduto = async () => {
     document.querySelector('#overlay-create-produto').style.display = 'flex';
     try {
-        const data = await getListaCategoria();
+        const { data } = await getListaCategoria();
         //cria lista de categorias
         const select = document.querySelector('#list-select-categoria');
         select.innerHTML = '';
@@ -146,8 +146,8 @@ const displayNewProduto = async () => {
 
                 const result = await createProduto(formData);
                 console.log(result);
-                if (result.status === 406 || result.status === 201) {
-                    boxMessage(result.message);
+                if (result.status === 201) {
+                    boxMessage(result.message, result.status);
                     exitBox();
                     displayListProduto();
                     return;
@@ -186,7 +186,7 @@ const displayUpdateProduto = (item) => {
                 select.appendChild(opt);
 
                 //busco api
-                const data = await getListaCategoria();
+                const { data } = await getListaCategoria();
 
                 if (data.status === 404) {
                     boxMessage(data.message);

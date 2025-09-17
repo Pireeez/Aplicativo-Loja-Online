@@ -37,7 +37,7 @@ const displayListCategoria = async () => {
 
     try {
         //chamada API pega lista de categorias
-        const data = await getListaCategoria();
+        const { data } = await getListaCategoria();
 
         //se não existe nenhuma categoria exibe menssagem
         if (data.status === 404) {
@@ -210,10 +210,12 @@ const sendNewCategoria = async () => {
         boxMessage(data.message, data.status);
         inputName.style.border = '1px solid red';
         inputName.value = '';
+        return;
     }
     if (data.status === 201) {
         boxMessage(data.message, data.status);
         exitBox();
         await displayListCategoria();
+        return;
     }
 };

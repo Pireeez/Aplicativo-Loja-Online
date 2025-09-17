@@ -33,7 +33,7 @@
 .exitDiv {
     display: flex;
     justify-content: end;
-    margin-bottom: 10px;
+    margin-bottom: 1px;
     width: 100%;
 }
 
@@ -42,6 +42,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    font-size: 0.8rem;
 }
 
 #create-sucess {
@@ -52,11 +53,17 @@
 }
 
 .box-sucess.sucess {
-    border: 1px solid green;
+    top: 20px; /* desce e aparece */
+    opacity: 1;
+    border: 1px solid rgb(90, 255, 90);
+    box-shadow: 0px 4px 10px rgba(68, 255, 68, 0.445);
 }
 
 .box-sucess.error {
-    border: 1px solid red;
+    top: 20px; /* desce e aparece */
+    opacity: 1;
+    border: 1px solid rgb(255, 81, 81);
+    box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.445);
 }
 
 /*---------------------------------------------------------------------------*/

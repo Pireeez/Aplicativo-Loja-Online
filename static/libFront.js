@@ -39,22 +39,20 @@ const exitBoxMessage = () => {
 const boxMessage = (message, status) => {
     const box = document.getElementById('sucessBox');
     const msg = document.getElementById('exibe-message');
-    const boxs = document.querySelector('.box-sucess');
 
     if (status === 201 || status === 200) {
-        box.classList.add('show');
-        boxs.classList.add('.sucess');
+        box.classList.add('sucess');
         msg.textContent = `${message}`;
+        setTimeout(() => {
+            box.classList.remove('sucess');
+        }, 3000);
     } else {
-        box.classList.add('show');
-        boxs.classList.add('.error');
+        box.classList.add('error');
         msg.textContent = `${message}`;
+        setTimeout(() => {
+            box.classList.remove('error');
+        }, 3000);
     }
-
-    setTimeout(() => {
-        box.classList.remove('show');
-        box.classList.remove();
-    }, 10000);
 };
 
 //limitaCaracter

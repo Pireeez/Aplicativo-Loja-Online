@@ -8,6 +8,16 @@ const pedidoRoutes = require('./routes/pedido');
 app.use(express.json());
 app.use(express.static('static'));
 app.use('/uploads', express.static('uploads'));
+app.use((req, res, next) => {
+    res.success = (message, data = null, status = 200) => {
+        return res.status(status).json({
+            status,
+            message,
+            data,
+        });
+    };
+    next();
+});
 
 // Montar as rotas de tarefas sob o prefixo /tarefas
 app.use('/categoria', categoriaRoutes);
