@@ -95,9 +95,9 @@ const getAllProdutos = async (req, res, next) => {
         );
 
         if (data.length) {
-            return res.status(200).json({ data: data, status: 200 });
+            return res.success('', data, 200);
         } else {
-            return next(ApiError('Nenhum produto existente!', 404));
+            return next(ApiError(mcError.naoExiste, 404));
         }
     } catch (error) {
         next(error);

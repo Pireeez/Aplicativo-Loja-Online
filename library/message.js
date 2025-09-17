@@ -7,7 +7,7 @@ const mcError = {
     campoInvalido: (arg) => `O campo ${key} não existe em nosso sistema`,
     digiteCategoria: 'Digite um nome para a categoria!',
     existeCategoria: 'O nome dessa categoria já existe!',
-    naoExisteCategoria: 'Nenhuma Categoria existente!',
+    naoExiste: 'Nenhuma Categoria existente!',
     valorStatus: `O valor do status tem que ser Visível ou Invisível`,
     informeValor: (arg) => `Informe o valor do ${arg}!`,
     nenhumUpdate: 'Nenhuma atualização foi realizada na categoria!',
