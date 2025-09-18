@@ -54,8 +54,10 @@ const displayListProduto = async () => {
             // coluna com botão de ação
             const tdAcoes = document.createElement('td');
             const btnAction = document.createElement('img');
+
             btnAction.src = './img/editSquare_categoria.png';
             btnAction.className = 'btn-edit';
+
             tdAcoes.appendChild(btnAction);
             tr.appendChild(tdAcoes);
             tbody.appendChild(tr);
@@ -163,55 +165,78 @@ const displayNewProduto = async () => {
     }
 };
 
-const displayUpdateProduto = (item) => {
+const displayUpdateProduto = async (item) => {
     document.querySelector('#overlay-update-produto').style.display = 'flex';
     const dataMapUpdate = {
-        '#nomeUpdateProduto': item.nome,
-        '#descricaoUpdateProduto': item.descricao,
-        '#categoriaUpdateProduto': item.categoria,
-        '#precoUpdateProduto': item.preco,
-        '#estoqueUpdateProduto': item.estoque,
-        '#status-update-produto-check': item.status,
-        '#imagemUpdateProduto': item.imagem,
+        nome: item.nome,
+        descricao: item.descricao,
+        categoria: item.categoria,
+        preco: item.preco,
+        estoque: item.estoque,
+        status: item.status,
+        imagem: item.imagem,
     };
-    const select = document.querySelector('#select-update');
-    Object.entries(dataMapUpdate).forEach(async ([key, values]) => {
-        if (key === '#categoriaUpdateProduto') {
+
+    //mapeio e informo os valores nos campos
+    const select = document.getElementById('select-update');
+    for (key in dataMapUpdate) {
+        if (key === 'categoria') {
             try {
                 //exibo a categoria selecionada da lista de produto
                 select.innerHTML = '';
+                select.id = 'select-update';
                 const opt = document.createElement('option');
                 opt.id = key;
-                opt.textContent = values;
+                opt.textContent = dataMapUpdate[key];
                 select.appendChild(opt);
 
                 //busco api
                 const { data } = await getListaCategoria();
 
+                //não existe categoria
                 if (data.status === 404) {
-                    boxMessage(data.message);
-                    return;
+                    return boxMessage(data.message);
                 }
 
                 //crio menu suspenso
                 data.forEach((element) => {
                     const option = document.createElement('option');
-                    if (element.nome === values) return;
+
+                    if (element.nome === dataMapUpdate[key]) return;
                     option.textContent = element.nome;
                     select.appendChild(option);
                 });
             } catch (error) {
                 console.log(error);
             }
-        } else if (key === '#status-update-produto-check') {
+        } else if (key === 'status') {
             //mudo o status do checkbox
-            document.querySelector(key).checked = values;
-            document.querySelector('#statusUpdateProduto').textContent = `Status: ${formataStatus(values)}`;
-        } else if (key === '#imagemUpdateProduto') {
+            document.getElementById(key).checked = dataMapUpdate[key];
+            document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(dataMapUpdate[key])}`;
+        } else if (key === 'imagem') {
             //exibo imagem
-            document.querySelector(key).src = values;
+            document.getElementById('imagemUpdateProduto').src = dataMapUpdate[key];
         } else {
-            document.querySelector(key).value = values;
+            document.getElementById(key).value = dataMapUpdate[key];
         }
+    }
+
+    const check = document.getElementById('status');
+    check.addEventListener('click', () => {
+        document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(check.checked)}`;
+    });
+
+    const btnUpdateProduto = document.getElementById('btn-update-produto');
+    btnUpdateProduto.addEventListener('click', () => {
+        for (key in dataMapUpdate) {
+            if (key === 'categoria') {
+                key = document.getElementById('select-update').value;
+            } else if (key === 'status') {
+                key = document.getElementById(key).checked;
+            } else {
+                key = document.getElementById(key).value;
+            }
+        }
+        console.log(dataMapUpdate);
     });
 };

@@ -173,6 +173,7 @@ const displayNewCategoria = () => {
     const status = document.querySelector('#box-new-categoria-status');
 
     checkStatus.addEventListener('click', () => {
+        console.log(checkStatus.checked);
         if (checkStatus.checked) {
             status.textContent = 'Status: Visível';
         } else {
@@ -192,11 +193,13 @@ const sendNewCategoria = async () => {
         inputName.style.border = '1px solid red';
         return;
     }
-
+    console.log(checkStatus.checked);
     const payload = {
         nome: inputName.value,
         status: checkStatus.checked,
     };
+
+    console.log(payload);
 
     const data = await createNewCategoria(payload);
 

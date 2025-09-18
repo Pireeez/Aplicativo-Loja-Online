@@ -1,10 +1,10 @@
 // mcError = Mensagem de erro Categoria
 // mSuccess = Mensagem de sucesso
 
-const mcError = {
+const mError = {
     //categoria
     naoExisteCampo: 'Não existe esse campo em nossa tabela!',
-    campoInvalido: (arg) => `O campo ${key} não existe em nosso sistema`,
+    campoInvalido: (arg) => `O campo ${arg} não existe em nosso sistema`,
     digiteCategoria: 'Digite um nome para a categoria!',
     existeCategoria: 'O nome dessa categoria já existe!',
     naoExiste: 'Nenhuma Categoria existente!',
@@ -14,10 +14,10 @@ const mcError = {
 
     //produtos
     campoObrigatorio: 'Os campos (nome, preco, estoque e categoria) são obrigatórios!',
-    limiteEstoque: 'Limite de estoque é até 100!',
+    limiteEstoque: 'Limite de estoque é de até 100!',
     estoqueRestante: (arg) => `Você só pode adicionar mais ${arg} no estoque!`,
     valoresNegativos: 'Preço e Estoque não podem ser valores negativos!',
-    estoqueExcedido: 'Total de estoque excedido!',
+    estoqueExcedido: 'Total de estoque dessa categoria excedido!',
     existeProduto: 'Esse produto já foi cadastrado!',
     falhaAddProduto: 'Não foi possível adicionar esse Produto!',
 };
@@ -29,4 +29,4 @@ const mSuccess = {
     custom: (arg) => arg,
 };
 
-module.exports = { mcError, mSuccess };
+module.exports = { mError, mSuccess };

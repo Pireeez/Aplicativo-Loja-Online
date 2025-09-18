@@ -8,9 +8,14 @@
 //  Estoque total por categoria ≤ 100.
 //  Preço com máscara monetária "R$".
 
+//fazer validação pela versão com procedure
+//procedure criar uma nova rota de produtos
+//fazer validação da quantidade, considerando os dados do banco do front
+
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
 const { ApiError } = require('../errors/library');
-const { mcError, mSuccess } = require('../library/message');
+const { mError, mSuccess } = require('../library/message');
+const sql = require('../library/sql');
 const arrCampos = ['nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
 const arrCamposUpdate = ['id_produto', 'nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
 
@@ -18,9 +23,10 @@ const createProdutos = async (req, res, next) => {
     try {
         let { nome, descricao, categoria, preco, estoque, status, imagem } = req.body;
 
+        //verifica se existe o campo
         for (key in req.body) {
             if (!arrCampos.includes(key)) {
-                return next(ApiError(mcError.naoExisteCampo, 400));
+                return next(ApiError(mError.naoExisteCampo, 400));
             }
         }
 
@@ -32,55 +38,59 @@ const createProdutos = async (req, res, next) => {
 
         //campos obrigatório (preco, estoque) = null para caso tenha 0
         if (!nome || preco == null || estoque == null || !categoria) {
-            return next(ApiError(mcError.campoObrigatorio, 400));
+            return next(ApiError(mError.campoObrigatorio, 400));
         }
 
+        //limite de estoque
         if (estoque > 100) {
-            return next(ApiError(mcError, 400));
+            return next(ApiError(mError.limiteEstoque, 400));
         }
 
-        const qtdEstoque = await getQuery(`SELECT SUM(estoque) AS totalEstoque FROM Produtos WHERE id_categoria = ?`, [
-            categoria,
-        ]);
+        //quantidade de estoque excedido
+        const qtdEstoque = await getQuery(sql.sumEstoqueProduto, [categoria]);
+        if (qtdEstoque.totalEstoque > 99) {
+            return next(ApiError(mError.estoqueExcedido, 400));
+        }
 
+        //total de estoque restante
         const totalEstoque = qtdEstoque.totalEstoque + estoque;
         if (totalEstoque > 100) {
             const restante = 100 - qtdEstoque.totalEstoque;
-            return next(ApiError(mcError.estoqueRestante(restante), 406));
+            return next(ApiError(mError.estoqueRestante(restante), 406));
         }
 
         //preco e estoque não podem ser valores negativos
         if (preco < 0 || estoque < 0) {
-            return next(ApiError(mcError.valoresNegativos, 400));
+            return next(ApiError(mError.valoresNegativos, 400));
         }
 
         //preco maior que 100
         if (estoque > 100) {
-            return next(ApiError(mcError.limiteEstoque, 400));
+            return next(ApiError(mError.limiteEstoque, 400));
         }
 
+        //total de estoque excedido!
         if (qtdEstoque.totalEstoque > 100) {
-            return next(ApiError(mcError.estoqueExcedido, 406));
+            return next(ApiError(mError.estoqueExcedido, 406));
         }
 
         //trativa antes de iserir
-        const verificaNome = await getQuery(`SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`, [nome]);
+        const verificaNome = await getQuery(sql.existeNomeProduto, [nome]);
 
+        //verifica de existe produto
         if (verificaNome.existeNome) {
-            return next(ApiError(mcError.existeProduto, 406));
+            return next(ApiError(mError.existeProduto, 406));
         }
 
         //verifico se enviou um file de imagem se não recebe a img (url)
         imagem = req.file ? `/uploads/${req.file.filename}` : imagem;
-        const sql = `INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-        const data = await runQuery(sql, [nome, descricao, categoria, preco, estoque, status, imagem]);
+        const data = await runQuery(sql.insertProdutos, [nome, descricao, categoria, preco, estoque, status, imagem]);
 
         if (data.changes !== 0) {
             res.success(mSuccess.created(nome), data, 201);
         } else {
-            next(ApiError(mcError.falhaAddProduto, 400));
+            next(ApiError(mError.falhaAddProduto, 400));
         }
     } catch (error) {
         next(error);
@@ -89,15 +99,12 @@ const createProdutos = async (req, res, next) => {
 
 const getAllProdutos = async (req, res, next) => {
     try {
-        const data = await allQuery(
-            `SELECT p.id_produto, p.nome, p.descricao, c.nome AS categoria, p.preco, p.estoque, p.status, p.imagem FROM Produtos p JOIN Categorias c ON c.id_categoria = p.id_categoria `,
-            []
-        );
+        const data = await allQuery(sql.filtraAllProdutos, []);
 
         if (data.length) {
             return res.success('', data, 200);
         } else {
-            return next(ApiError(mcError.naoExiste, 404));
+            return next(ApiError(mError.naoExiste, 404));
         }
     } catch (error) {
         next(error);
@@ -131,9 +138,7 @@ const updateProdutos = async (req, res, next) => {
         if (alteracao.length === 0 || params.length === 0) {
             return next(ApiError('Nenhuma alteração realizada!', 400));
         }
-
-        const sql = `UPDATE Produtos SET ${alteracao} WHERE id_produto = ?`;
-        const data = await runQuery(sql, params);
+        const data = await runQuery(sql.updateProduto(alteracao), params);
 
         if (data.changes !== 0) {
             res.status(200).json({ message: `Campos: "${campos.join(', ')}" alterado com sucesso!`, status: 200 });
