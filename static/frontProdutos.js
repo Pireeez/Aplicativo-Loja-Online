@@ -10,9 +10,18 @@ const getProdutos = async () => {
 const createProduto = async (formData) => {
     try {
         const data = await axios
-            .post('/produto', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            })
+            .post('/produto', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .then((res) => res.data);
+        return data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+const updateProduto = async (formData) => {
+    try {
+        const data = await axios
+            .patch('/produto', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
             .then((res) => res.data);
         return data;
     } catch (error) {
@@ -44,7 +53,7 @@ const displayListProduto = async () => {
                     td.textContent = formataPreco(item[key]);
                 } else if (key === 'status') {
                     td.textContent = formataStatus(item[key]);
-                    td.className = formataCor(td.textContent);
+                    td.className = formataCor(item[key]);
                 } else {
                     td.textContent = item[key];
                 }
@@ -109,7 +118,7 @@ const displayNewProduto = async () => {
                     select.addEventListener('input', () => (select.style.border = ''));
                     return;
                 }
-                const fileInput = document.querySelector('#fileElem');
+                const fileInput = document.querySelector('.fileElem');
                 const dataMap = {
                     nome: document.querySelector('#nomeProduto').value,
                     descricao: document.querySelector('#descricaoProduto').value,
@@ -166,22 +175,28 @@ const displayNewProduto = async () => {
 };
 
 const displayUpdateProduto = async (item) => {
-    document.querySelector('#overlay-update-produto').style.display = 'flex';
-    const dataMapUpdate = {
-        nome: item.nome,
-        descricao: item.descricao,
-        categoria: item.categoria,
-        preco: item.preco,
-        estoque: item.estoque,
-        status: item.status,
-        imagem: item.imagem,
-    };
+    try {
+        const { data } = await getListaCategoria();
+        document.querySelector('#overlay-update-produto').style.display = 'flex';
 
-    //mapeio e informo os valores nos campos
-    const select = document.getElementById('select-update');
-    for (key in dataMapUpdate) {
-        if (key === 'categoria') {
-            try {
+        const dataMapUpdate = {
+            id_produto: item.id_produto,
+            nome: item.nome,
+            descricao: item.descricao,
+            categoria: item.categoria,
+            preco: item.preco,
+            estoque: item.estoque,
+            status: item.status,
+            imagem: item.imagem,
+        };
+
+        //mapeio e informo os valores nos campos
+        //busco api
+
+        const select = document.getElementById('select-update');
+        for (key in dataMapUpdate) {
+            if (key === 'id_produto') continue;
+            if (key === 'categoria') {
                 //exibo a categoria selecionada da lista de produto
                 select.innerHTML = '';
                 select.id = 'select-update';
@@ -189,9 +204,6 @@ const displayUpdateProduto = async (item) => {
                 opt.id = key;
                 opt.textContent = dataMapUpdate[key];
                 select.appendChild(opt);
-
-                //busco api
-                const { data } = await getListaCategoria();
 
                 //não existe categoria
                 if (data.status === 404) {
@@ -206,37 +218,55 @@ const displayUpdateProduto = async (item) => {
                     option.textContent = element.nome;
                     select.appendChild(option);
                 });
+            } else if (key === 'status') {
+                //mudo o status do checkbox
+                document.getElementById(key).checked = dataMapUpdate[key];
+                document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(
+                    dataMapUpdate[key]
+                )}`;
+            } else if (key === 'imagem') {
+                //exibo imagem
+                document.getElementById('imagemUpdateProduto').src = dataMapUpdate[key];
+            } else {
+                document.getElementById(key).value = dataMapUpdate[key];
+            }
+        }
+
+        const check = document.getElementById('status');
+        check.addEventListener('click', () => {
+            document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(check.checked)}`;
+        });
+
+        const btnUpdateProduto = document.getElementById('btn-update-produto');
+        btnUpdateProduto.addEventListener('click', async () => {
+            try {
+                const formData = new FormData();
+
+                for (key in dataMapUpdate) {
+                    if (key === 'categoria') {
+                        const findCetegoria = data.find((item) => item.nome === select.value);
+                        formData.append(key, findCetegoria.id_categoria);
+                    } else if (key === 'status') {
+                        console.log(check.checked);
+                        formData.append(key, check.checked);
+                    } else if (key === 'imagem') {
+                        formData.append(key, document.querySelector('.fileElem').files || null);
+                    } else if (key === 'id_produto') {
+                        formData.append(key, dataMapUpdate.id_produto);
+                    } else {
+                        formData.append(key, document.getElementById(key).value);
+                    }
+                }
+
+                const res = await updateProduto(formData);
+                boxMessage(res.message);
+                exitBox();
+                displayListProduto();
             } catch (error) {
                 console.log(error);
             }
-        } else if (key === 'status') {
-            //mudo o status do checkbox
-            document.getElementById(key).checked = dataMapUpdate[key];
-            document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(dataMapUpdate[key])}`;
-        } else if (key === 'imagem') {
-            //exibo imagem
-            document.getElementById('imagemUpdateProduto').src = dataMapUpdate[key];
-        } else {
-            document.getElementById(key).value = dataMapUpdate[key];
-        }
+        });
+    } catch (error) {
+        console.log(error);
     }
-
-    const check = document.getElementById('status');
-    check.addEventListener('click', () => {
-        document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(check.checked)}`;
-    });
-
-    const btnUpdateProduto = document.getElementById('btn-update-produto');
-    btnUpdateProduto.addEventListener('click', () => {
-        for (key in dataMapUpdate) {
-            if (key === 'categoria') {
-                key = document.getElementById('select-update').value;
-            } else if (key === 'status') {
-                key = document.getElementById(key).checked;
-            } else {
-                key = document.getElementById(key).value;
-            }
-        }
-        console.log(dataMapUpdate);
-    });
 };

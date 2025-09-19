@@ -17,7 +17,7 @@ const { ApiError } = require('../errors/library');
 const { mError, mSuccess } = require('../library/message');
 const sql = require('../library/sql');
 const arrCampos = ['nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
-const arrCamposUpdate = ['id_produto', 'nome', 'descricao', 'categoria', 'preco', 'estoque', 'status', 'imagem'];
+const arrCamposUpdate = ['id_produto', 'nome', 'descricao', 'id_categoria', 'preco', 'estoque', 'status', 'imagem'];
 
 const createProdutos = async (req, res, next) => {
     try {
@@ -34,7 +34,20 @@ const createProdutos = async (req, res, next) => {
         categoria = Number(categoria);
         preco = parseFloat(preco);
         estoque = Number(estoque);
-        status = Boolean(status);
+        status = status === 'false' ? false : true;
+
+        //quantidade de estoque excedido
+        const qtdEstoque = await getQuery(sql.sumEstoqueProduto, [categoria]);
+        if (qtdEstoque.totalEstoque > 100) {
+            return next(ApiError(mError.estoqueExcedido, 406));
+        }
+
+        //total de estoque restante
+        const totalEstoque = qtdEstoque.totalEstoque + estoque;
+        if (totalEstoque > 100) {
+            const restante = 100 - qtdEstoque.totalEstoque;
+            return next(ApiError(mError.estoqueRestante(restante), 406));
+        }
 
         //campos obrigatório (preco, estoque) = null para caso tenha 0
         if (!nome || preco == null || estoque == null || !categoria) {
@@ -46,32 +59,9 @@ const createProdutos = async (req, res, next) => {
             return next(ApiError(mError.limiteEstoque, 400));
         }
 
-        //quantidade de estoque excedido
-        const qtdEstoque = await getQuery(sql.sumEstoqueProduto, [categoria]);
-        if (qtdEstoque.totalEstoque > 99) {
-            return next(ApiError(mError.estoqueExcedido, 400));
-        }
-
-        //total de estoque restante
-        const totalEstoque = qtdEstoque.totalEstoque + estoque;
-        if (totalEstoque > 100) {
-            const restante = 100 - qtdEstoque.totalEstoque;
-            return next(ApiError(mError.estoqueRestante(restante), 406));
-        }
-
         //preco e estoque não podem ser valores negativos
         if (preco < 0 || estoque < 0) {
             return next(ApiError(mError.valoresNegativos, 400));
-        }
-
-        //preco maior que 100
-        if (estoque > 100) {
-            return next(ApiError(mError.limiteEstoque, 400));
-        }
-
-        //total de estoque excedido!
-        if (qtdEstoque.totalEstoque > 100) {
-            return next(ApiError(mError.estoqueExcedido, 406));
         }
 
         //trativa antes de iserir
@@ -86,6 +76,10 @@ const createProdutos = async (req, res, next) => {
         imagem = req.file ? `/uploads/${req.file.filename}` : imagem;
 
         const data = await runQuery(sql.insertProdutos, [nome, descricao, categoria, preco, estoque, status, imagem]);
+
+        if (data.code === 'SQLITE_CONSTRAINT') {
+            res.status(400).json({ data: data, message: 'estoque máximo 100!' });
+        }
 
         if (data.changes !== 0) {
             res.success(mSuccess.created(nome), data, 201);
@@ -118,26 +112,45 @@ const updateProdutos = async (req, res, next) => {
         const params = [];
         const campos = [];
 
+        bodyUpdate.categoria = Number(bodyUpdate.categoria);
+        bodyUpdate.id_produto = Number(bodyUpdate.id_produto);
+        bodyUpdate.preco = parseFloat(bodyUpdate.preco) || 0;
+        bodyUpdate.estoque = Number(bodyUpdate.estoque);
+        bodyUpdate.status = Boolean(bodyUpdate.status === 'false' ? false : true);
+
         if (bodyUpdate.estoque > 100) {
             return next(ApiError('Quantidade máxima de estoque é 100!', 406));
         }
 
+        //preco e estoque não podem ser valores negativos
+        if (bodyUpdate.preco < 0 || bodyUpdate.estoque < 0) {
+            return next(ApiError(mError.valoresNegativos, 400));
+        }
+
+        //verifico se enviou um file de imagem se não recebe a img (url)
+        bodyUpdate.imagem = req.file ? `/uploads/${req.file.filename}` : '';
+
         for (key in bodyUpdate) {
             if (key === 'id_produto') continue;
             if (arrCamposUpdate.includes(key)) {
-                if (bodyUpdate[key] !== undefined || bodyUpdate[key] !== '' || bodyUpdate[key] !== null) {
+                if (
+                    bodyUpdate[key] !== undefined &&
+                    bodyUpdate[key] !== null &&
+                    bodyUpdate[key] !== '' &&
+                    bodyUpdate[key] !== 0
+                ) {
                     alteracao.push(`${key} = ?`);
                     params.push(bodyUpdate[key]);
                     campos.push(key);
                 }
             }
         }
-
         params.push(bodyUpdate.id_produto);
 
         if (alteracao.length === 0 || params.length === 0) {
             return next(ApiError('Nenhuma alteração realizada!', 400));
         }
+
         const data = await runQuery(sql.updateProduto(alteracao), params);
 
         if (data.changes !== 0) {

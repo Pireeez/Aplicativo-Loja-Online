@@ -86,52 +86,53 @@ const formataStatus = (status) => {
 
 //formata cor de visível = green / invisível = red pela classname
 const formataCor = (statusCor) => {
-    if (statusCor === 'Visível') {
+    if (statusCor === 1 || statusCor === true) {
         return 'status-color-green';
     }
 
-    if (statusCor === 'Invisível') {
+    if (statusCor === 0 || statusCor === false) {
         return 'status-color-red';
     }
 };
 
 //pega arquivo de imagem e exibe na tela e converte para envio de dados
-const dropArea = document.getElementById('drop-area');
-const fileInput = document.getElementById('fileElem');
+const dropAreas = document.querySelectorAll('.drop-area');
+dropAreas.forEach((area, index) => {
+    const fileInput = area.querySelector('.fileElem');
+    const preview = area.parentElement.querySelector('img'); // pega o <img> dentro do mesmo modal
 
-///clicar na área abre o input
-dropArea.addEventListener('click', () => fileInput.click());
+    // clicar na área abre o input
+    area.addEventListener('click', () => fileInput.click());
 
-//seleção via input
-fileInput.addEventListener('change', () => {
-    handleFiles(fileInput.files);
+    // seleção via input
+    fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files, preview);
+    });
+
+    // arrastar sobre a área
+    area.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        area.classList.add('hover');
+    });
+
+    // sair da área sem soltar
+    area.addEventListener('dragleave', () => {
+        area.classList.remove('hover');
+    });
+
+    // soltar arquivos
+    area.addEventListener('drop', (e) => {
+        e.preventDefault();
+        area.classList.remove('hover');
+        handleFiles(e.dataTransfer.files, preview);
+    });
 });
 
-//srrastar sobre a área
-dropArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropArea.classList.add('hover');
-});
-
-//sair da área sem soltar
-dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('hover');
-});
-
-//soltar arquivos
-dropArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropArea.classList.remove('hover');
-    handleFiles(e.dataTransfer.files);
-});
-
-//função interna para processar arquivo
-function handleFiles(files) {
+function handleFiles(files, preview) {
     for (const file of files) {
         if (!file.type.startsWith('image/')) continue;
 
         // Cria URL temporária para mostrar a imagem
-        const preview = document.getElementById('preview');
         const imageURL = URL.createObjectURL(file);
         preview.src = imageURL;
     }

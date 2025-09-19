@@ -1,6 +1,8 @@
 require('dotenv').config();
+
 const express = require('express');
 const app = express();
+
 const categoriaRoutes = require('./routes/categoria');
 const produtoRoutes = require('./routes/produto');
 const pedidoRoutes = require('./routes/pedido');
@@ -8,6 +10,7 @@ const pedidoRoutes = require('./routes/pedido');
 app.use(express.json());
 app.use(express.static('static'));
 app.use('/uploads', express.static('uploads'));
+
 app.use((req, res, next) => {
     res.success = (message, data = null, status = 200) => {
         return res.status(status).json({
@@ -23,7 +26,6 @@ app.use((req, res, next) => {
 app.use('/categoria', categoriaRoutes);
 app.use('/produto', produtoRoutes);
 app.use('/pedido', pedidoRoutes);
-
 app.use((err, req, res, next) => {
     console.error(err.stack);
 
@@ -40,5 +42,5 @@ app.use((err, req, res, next) => {
 // (Adicionaremos o middleware de erro aqui no próximo módulo)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta http://localhost:${port}`);
+    console.log(`Servidor rodando na porta http://localhost:${port}/backoffice.html`);
 });

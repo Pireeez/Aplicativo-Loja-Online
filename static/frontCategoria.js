@@ -56,7 +56,7 @@ const displayListCategoria = async () => {
                 td.textContent = obj[key];
                 if (key === 'status') {
                     td.textContent = formataStatus(obj[key]);
-                    td.className = formataCor(td.textContent);
+                    td.className = formataCor(obj[key]);
                 } else {
                     td.className = key;
                 }
@@ -66,7 +66,7 @@ const displayListCategoria = async () => {
             const tdAcoes = document.createElement('td');
             const btnAction = document.createElement('img');
             btnAction.src = './img/editSquare_categoria.png';
-            btnAction.className = 'btn-edit';
+            btnAction.className = '.btn-edit';
             tdAcoes.appendChild(btnAction);
             tr.appendChild(tdAcoes);
             tbody.appendChild(tr);

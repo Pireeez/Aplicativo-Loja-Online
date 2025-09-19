@@ -4,12 +4,9 @@ nome TEXT NOT NULL UNIQUE,
 status BOOLEAN
 );
 
-SELECT * FROM Categorias
-
 DROP TABLE Categorias;
-
-
 DROP TABLE Produtos
+
 
 CREATE TABLE Produtos (
 id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,29 +17,33 @@ preco REAL NOT NULL,
 estoque INTEGER NOT NULL,
 status BOOLEAN,
 imagem TEXT,
-FOREIGN KEY (id_categoria) REFERENCES Categorias (id_categoria) 
+FOREIGN KEY (id_categoria) REFERENCES Categorias (id_categoria)
 );
 
-SELECT 
-p.id_produto, 
-p.nome, 
-p.descricao, 
-c.nome, 
-p.estoque, 
-p.status, 
-p.imagem 
-FROM Produtos p
-JOIN Categorias c ON c.id_categoria = p.id_categoria  
+-- SELECT 
+-- p.id_produto, 
+-- p.nome, 
+-- p.descricao, 
+-- c.nome, 
+-- p.estoque, 
+-- p.status, 
+-- p.imagem 
+-- FROM Produtos p
+-- JOIN Categorias c ON c.id_categoria = p.id_categoria  
+
+
+CREATE TRIGGER validar_estoque
+BEFORE INSERT ON Produtos
+FOR EACH ROW
+        WHEN NEW.estoque > 100 
+BEGIN
+        SELECT RAISE(ABORT, 'Estoque máximo permitido é 100!');
+END;
+
 
 INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem)
-VALUES ('Geladeira Brastemp', 
-        'A Geladeira Brastemp BRO85AK é sinônimo de inovação, com 554 litros de capacidade e classificação A+..',
-        1,
-        6359.00,
-        5,
-        0,
-        '/uploads/geladeira_brastemp.png'
-        )
+VALUES ('Geladeira Brastemp', 'A Geladeira',1,6359.00,101,0,null)
+
 
 -- CREATE TABLE Pedidos (
 -- id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
