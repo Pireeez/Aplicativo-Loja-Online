@@ -102,6 +102,8 @@ const displayNewProduto = async () => {
         //customização do check do status
         const check = document.querySelector('#status-produto-check');
         const statusView = document.querySelector('#box-produto-status');
+        check.checked = false;
+        statusView.textContent = `Status: ${formataStatus(check.checked)}`;
         check.addEventListener('click', () => {
             statusView.textContent = `Status: ${formataStatus(check.checked)}`;
         });
@@ -156,7 +158,6 @@ const displayNewProduto = async () => {
                 }
 
                 const result = await createProduto(formData);
-                console.log(result);
                 if (result.status === 201) {
                     boxMessage(result.message, result.status);
                     exitBox();
@@ -226,7 +227,7 @@ const displayUpdateProduto = async (item) => {
                 )}`;
             } else if (key === 'imagem') {
                 //exibo imagem
-                document.getElementById('imagemUpdateProduto').src = dataMapUpdate[key];
+                document.getElementById('previewUpdate').src = dataMapUpdate[key];
             } else {
                 document.getElementById(key).value = dataMapUpdate[key];
             }
@@ -247,10 +248,9 @@ const displayUpdateProduto = async (item) => {
                         const findCetegoria = data.find((item) => item.nome === select.value);
                         formData.append(key, findCetegoria.id_categoria);
                     } else if (key === 'status') {
-                        console.log(check.checked);
                         formData.append(key, check.checked);
                     } else if (key === 'imagem') {
-                        formData.append(key, document.querySelector('.fileElem').files || null);
+                        formData.append(key, document.querySelector('#fileUpdate').files[0]);
                     } else if (key === 'id_produto') {
                         formData.append(key, dataMapUpdate.id_produto);
                     } else {

@@ -24,7 +24,7 @@ const mError = {
 
 const mSuccess = {
     created: (arg) => `${arg} criado com sucesso!`,
-    updated: (arg) => `${arg} atualizado com sucesso!`,
+    updated: `Produto atualizado com sucesso!`,
     deleted: (arg) => `${arg} deletado com sucesso!`,
     custom: (arg) => arg,
 };

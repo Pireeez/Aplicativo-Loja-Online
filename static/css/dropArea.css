@@ -29,6 +29,14 @@
     margin: 10px auto; /* centralizar */
 }
 
+#previewUpdate {
+    max-width: 150px; /* largura máxima */
+    max-height: 150px; /* altura máxima */
+    object-fit: contain; /* mantém proporção sem cortar */
+    display: block;
+    margin: 10px auto; /* centralizar */
+}
+
 #imagemUpdateProduto {
     max-width: 150px; /* largura máxima */
     max-height: 150px; /* altura máxima */

@@ -78,7 +78,7 @@ const createProdutos = async (req, res, next) => {
         const data = await runQuery(sql.insertProdutos, [nome, descricao, categoria, preco, estoque, status, imagem]);
 
         if (data.code === 'SQLITE_CONSTRAINT') {
-            res.status(400).json({ data: data, message: 'estoque máximo 100!' });
+            return next(ApiError(mError.limiteEstoque, 400));
         }
 
         if (data.changes !== 0) {
@@ -110,7 +110,6 @@ const updateProdutos = async (req, res, next) => {
         const bodyUpdate = req.body;
         const alteracao = [];
         const params = [];
-        const campos = [];
 
         bodyUpdate.categoria = Number(bodyUpdate.categoria);
         bodyUpdate.id_produto = Number(bodyUpdate.id_produto);
@@ -119,7 +118,7 @@ const updateProdutos = async (req, res, next) => {
         bodyUpdate.status = Boolean(bodyUpdate.status === 'false' ? false : true);
 
         if (bodyUpdate.estoque > 100) {
-            return next(ApiError('Quantidade máxima de estoque é 100!', 406));
+            return next(ApiError(mError.limiteEstoque, 406));
         }
 
         //preco e estoque não podem ser valores negativos
@@ -128,35 +127,29 @@ const updateProdutos = async (req, res, next) => {
         }
 
         //verifico se enviou um file de imagem se não recebe a img (url)
-        bodyUpdate.imagem = req.file ? `/uploads/${req.file.filename}` : '';
+        bodyUpdate.imagem = req.file ? `/uploads/${req.file.filename}` : null;
 
         for (key in bodyUpdate) {
             if (key === 'id_produto') continue;
             if (arrCamposUpdate.includes(key)) {
-                if (
-                    bodyUpdate[key] !== undefined &&
-                    bodyUpdate[key] !== null &&
-                    bodyUpdate[key] !== '' &&
-                    bodyUpdate[key] !== 0
-                ) {
+                if (bodyUpdate[key] !== undefined && bodyUpdate[key] !== null && bodyUpdate[key] !== '') {
                     alteracao.push(`${key} = ?`);
                     params.push(bodyUpdate[key]);
-                    campos.push(key);
                 }
             }
         }
         params.push(bodyUpdate.id_produto);
 
         if (alteracao.length === 0 || params.length === 0) {
-            return next(ApiError('Nenhuma alteração realizada!', 400));
+            return next(ApiError(mError.nenhumUpdate, 400));
         }
 
         const data = await runQuery(sql.updateProduto(alteracao), params);
 
         if (data.changes !== 0) {
-            res.status(200).json({ message: `Campos: "${campos.join(', ')}" alterado com sucesso!`, status: 200 });
+            res.success(mSuccess.updated, data, 200);
         } else {
-            next(ApiError('Nenhuma alteração realizada!', 400));
+            next(ApiError(mError.nenhumUpdate, 400));
         }
     } catch (error) {
         next(error);

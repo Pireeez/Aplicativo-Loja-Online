@@ -172,8 +172,9 @@ const displayNewCategoria = () => {
     const checkStatus = document.querySelector('#box-status-check');
     const status = document.querySelector('#box-new-categoria-status');
 
+    checkStatus.checked = false;
+    status.textContent = `Status: ${formataStatus(checkStatus.checked)}`;
     checkStatus.addEventListener('click', () => {
-        console.log(checkStatus.checked);
         if (checkStatus.checked) {
             status.textContent = 'Status: Visível';
         } else {
