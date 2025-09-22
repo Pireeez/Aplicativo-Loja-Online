@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="./css/boxMessage.css">
     <link rel="stylesheet" href="./css/dropArea.css">
     <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/filter.css">
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./frontCategoria.js" defer></script>
@@ -91,7 +92,37 @@
             <section class="pedidos-conteiner">
                 <div class="header">
                     <h2>Pedidos</h2>
-                    <button id="btn-filtraPedido"><img src="./img/filterPedido.png"></button>
+                    <button id="btn-filtraPedido" onclick="displayFilter()"><img src="./img/filterPedido.png"></button>
+                </div>
+
+                <div class="filter">
+                    <h2>Filtros</h2>
+                    <div class="input-filter">
+                        <div class="input-group">
+                            <label>Data Inicial</label>
+                            <input type="date">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Data Final</label>
+                            <input type="date">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Valor Mínimo</label>
+                            <input type="number" placeholder="R$ 0,00">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Valor Máximo</label>
+                            <input type="number" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+
+                    <div class="btn-filter">
+                        <button id="btn-clear-filter">Limpar Filtros</button>
+                        <button id="btn-filter">Filtrar</button>
+                    </div>
                 </div>
                 <div class="container-data">
                     <table class="table">
@@ -244,7 +275,7 @@
         <div id="overlay-details-pedido" class="overlay">
             <div class="box-overlay">
                 <div class="box-header">
-                    <h3>Detalhes do Pedido</h3>
+                    <h3 id="title-details">Detalhes do Pedido</h3>
                     <p onclick="exitBox()">X</p>
                 </div>
                 <div class="container-pedido-details">

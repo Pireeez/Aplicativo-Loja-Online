@@ -15,6 +15,7 @@ const getDetailsPedido = async (id) => {
         console.log(error);
     }
 };
+
 const displayListPedido = async () => {
     document.querySelector('.categorias-conteiner').style.display = 'none';
     document.querySelector('.produtos-conteiner').style.display = 'none';
@@ -64,10 +65,15 @@ const displayDetailsPedido = async (item) => {
         const listaDetailsPedido = await getDetailsPedido(item.id_pedido);
         const tbody = document.querySelector('.details-conteiner .table tbody');
 
-        document.querySelector('#data-pedido').textContent = new Date(item.data).toLocaleDateString();
-        document.querySelector('#qtd-itens').textContent = item.totalItens;
-        document.querySelector('#valor-total').textContent = formataPreco(item.valorTotal);
+        const qtdItem = listaDetailsPedido.reduce((acc, item) => {
+            return (acc += 1);
+        }, 0);
 
+        document.querySelector('#title-details').textContent = `Detalhes do Pedido: ${item.id_pedido}`;
+        document.querySelector('#data-pedido').textContent = new Date(item.data).toLocaleDateString();
+        document.querySelector('#qtd-itens').textContent = qtdItem;
+        document.querySelector('#valor-total').textContent = formataPreco(item.valorTotal);
+        tbody.innerHTML = '';
         listaDetailsPedido.forEach((item) => {
             const tr = document.createElement('tr');
 
@@ -88,5 +94,14 @@ const displayDetailsPedido = async (item) => {
         });
     } catch (error) {
         console.log(error);
+    }
+};
+
+const displayFilter = () => {
+    const filterDisplay = document.querySelector('.filter');
+    if (filterDisplay.style.display === 'flex') {
+        filterDisplay.style.display = 'none'; // esconde
+    } else {
+        filterDisplay.style.display = 'flex'; // mostra
     }
 };

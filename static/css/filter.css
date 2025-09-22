@@ -1,0 +1,58 @@
+.filter {
+    border: 1px solid rgb(223, 223, 223);
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.input-filter {
+    display: flex;
+    flex-wrap: wrap; /* se quiser que os grupos quebrem linha */
+    gap: 15px; /* espaço entre cada grupo */
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column; /* força o texto em cima e input embaixo */
+}
+.input-filter input {
+    width: 250px;
+}
+
+.btn-filter {
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+
+#btn-clear-filter {
+    border: 1px solid rgb(230, 230, 230);
+    padding: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#btn-clear-filter:hover {
+    background-color: rgb(209, 209, 209);
+}
+
+#btn-filter {
+    box-shadow: none;
+    border: none;
+    background-color: var(--btn-newCategoria);
+    color: var(--font-btn);
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    width: 180px;
+}
+
+#btn-filter:hover {
+    cursor: pointer;
+    background-color: var(--btn-backgroundHover);
+}
