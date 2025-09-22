@@ -92,7 +92,22 @@ const listaProdutoCategoria = (data) => {
             divContainer.appendChild(infoProduto);
             sectionContainer.appendChild(divContainer);
 
-            btnProduto.addEventListener('click');
+            btnProduto.addEventListener('click', () => {
+                sendProdutoCarrinho(item);
+            });
         });
+    }
+};
+
+const sendProdutoCarrinho = (produto) => {
+    try {
+        console.log(produto);
+        const payload = {
+            id_produto: produto.id_produto,
+            quantidade: 1,
+            valor: produto.preco,
+        };
+    } catch (error) {
+        console.error(error);
     }
 };
