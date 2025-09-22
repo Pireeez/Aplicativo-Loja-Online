@@ -105,3 +105,9 @@ const displayFilter = () => {
         filterDisplay.style.display = 'flex'; // mostra
     }
 };
+
+const clearFilter = () => {
+    document.querySelectorAll('#dt-inicial, #dt-final, #value-min, #value-max').forEach((el) => (el.value = ''));
+    //const btnClearFilter = document.querySelector('#btn-clear-filter');
+    //const btnFilter = document.querySelector('#btn-filter');
+};

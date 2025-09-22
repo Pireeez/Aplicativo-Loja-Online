@@ -100,28 +100,28 @@
                     <div class="input-filter">
                         <div class="input-group">
                             <label>Data Inicial</label>
-                            <input type="date">
+                            <input id="dt-inicial" type="date">
                         </div>
 
                         <div class="input-group">
                             <label>Data Final</label>
-                            <input type="date">
+                            <input id="dt-final" type="date">
                         </div>
 
                         <div class="input-group">
                             <label>Valor Mínimo</label>
-                            <input type="number" placeholder="R$ 0,00">
+                            <input id="value-min" type="number" placeholder="R$ 0,00">
                         </div>
 
                         <div class="input-group">
                             <label>Valor Máximo</label>
-                            <input type="number" placeholder="R$ 0,00">
+                            <input id="value-max" type="number" placeholder="R$ 0,00">
                         </div>
                     </div>
 
                     <div class="btn-filter">
-                        <button id="btn-clear-filter">Limpar Filtros</button>
-                        <button id="btn-filter">Filtrar</button>
+                        <button id="btn-clear-filter" onclick="clearFilter()">Limpar Filtros</button>
+                        <button id="btn-filter" onclick="filterPedido()">Filtrar</button>
                     </div>
                 </div>
                 <div class="container-data">
