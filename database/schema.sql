@@ -20,9 +20,9 @@
 -- FOREIGN KEY (id_categoria) REFERENCES Categorias (id_categoria)
 -- );
 
-DROP TABLE Pedidos;
-DROP TABLE Itens_Pedidos;
-DROP TABLE Carrinho;
+-- DROP TABLE Pedidos;
+-- DROP TABLE Itens_Pedidos;
+-- DROP TABLE Carrinho;
 
 CREATE TABLE Itens_Pedidos (
   id_item INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,25 +65,28 @@ GROUP BY p.id_pedido
 
 WITH valorTotal AS 
 (
-SELECT 
-  pd.nome, 
-  SUM(i.valor_unitario * i.quantidade) AS valor_total
-FROM Itens_Pedidos i
-JOIN Produtos pd ON pd.id_produto = i.id_produto 
-GROUP BY pd.nome
+    SELECT
+      i.id_pedido,
+      pd.nome, 
+      SUM(i.quantidade) AS quantidade_total,
+      i.valor_unitario,
+      SUM(i.valor_unitario * i.quantidade) AS valor_total
+    FROM Itens_Pedidos i
+    JOIN Produtos pd ON pd.id_produto = i.id_produto 
+    GROUP BY i.id_pedido, pd.nome, i.valor_unitario
 )
 SELECT
+  p.id_pedido,
   pd.nome,
   p.data,
-  i.quantidade,
-  i.valor_unitario AS preco_unitario,
+  vt.quantidade_total AS quantidade,
+  vt.valor_unitario AS preco_unitario,
   vt.valor_total AS subtotal
 FROM Pedidos p
-JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
-JOIN Produtos pd ON pd.id_produto = i.id_produto
-JOIN valorTotal vt ON vt.nome = pd.nome
-WHERE p.id_pedido = 1
-ORDER BY vt.valor_total DESC
+JOIN valorTotal vt ON vt.id_pedido = p.id_pedido
+JOIN Produtos pd ON pd.nome = vt.nome
+WHERE p.id_pedido = ?
+ORDER BY vt.valor_total DESC;
 
 
 

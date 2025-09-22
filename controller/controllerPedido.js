@@ -11,15 +11,10 @@ const sql = require('../library/sql');
 
 const createPedidos = async (req, res, next) => {
     try {
-        //Buscar itens do carrinho
         const itensCarrinho = await allQuery(`
             SELECT c.id_produto, c.quantidade, c.valor_unitario
             FROM Carrinho c
         `);
-
-        // if (itensCarrinho.length === 0) {
-        //     return next(ApiError('Carrinho vazio, não é possível criar pedido!', 400));
-        // }
 
         //Calcular valor total
         const valorTotal = itensCarrinho.reduce((acc, item) => {
@@ -35,9 +30,6 @@ const createPedidos = async (req, res, next) => {
             [valorTotal]
         );
 
-        // if (pedido.changes === 0) {
-        //     return next(ApiError('Falha ao criar o Pedido!'), 400);
-        // }
         //pega lastID do pedido criado
         const id_pedido = pedido.lastID;
 
@@ -73,9 +65,7 @@ const getAllPedidos = async (req, res, next) => {
             LEFT JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
             GROUP BY p.id_pedido
             `);
-        // if (data.data.length === 0) {
-        //     return next(ApiError('Nenhum pedido existente!'), 404);
-        // }
+
         res.success('', data, 200);
     } catch (error) {
         next(error);
@@ -92,34 +82,32 @@ const detailsPedidos = async (req, res, next) => {
 
         const data = await allQuery(
             `
-            WITH valorTotal AS
+        WITH valorTotal AS 
             (
                 SELECT
-                    pd.nome,
+                    i.id_pedido,
+                    pd.nome, 
+                    SUM(i.quantidade) AS quantidade_total,
+                    i.valor_unitario,
                     SUM(i.valor_unitario * i.quantidade) AS valor_total
                 FROM Itens_Pedidos i
-                JOIN Produtos pd ON pd.id_produto = i.id_produto
-                GROUP BY pd.nome
+                JOIN Produtos pd ON pd.id_produto = i.id_produto 
+                GROUP BY i.id_pedido, pd.nome, i.valor_unitario
             )
-            SELECT
-                pd.nome,
-                p.data,
-                i.quantidade,
-                i.valor_unitario AS preco_unitario,
-                vt.valor_total AS subtotal
-            FROM Pedidos p
-            JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
-            JOIN Produtos pd ON pd.id_produto = i.id_produto
-            JOIN valorTotal vt ON vt.nome = pd.nome
-            WHERE p.id_pedido = ?
-            ORDER BY vt.valor_total DESC
+        SELECT
+            pd.nome,
+            p.data,
+            vt.quantidade_total AS quantidade,
+            vt.valor_unitario AS preco_unitario,
+            vt.valor_total AS subtotal
+        FROM Pedidos p
+        JOIN valorTotal vt ON vt.id_pedido = p.id_pedido
+        JOIN Produtos pd ON pd.nome = vt.nome
+        WHERE p.id_pedido = ?
+        ORDER BY vt.valor_total DESC;
             `,
             [id_pedido]
         );
-
-        // if (data.data.length === 0) {
-        //     return next(ApiError('Não existe nenhum detalhes sobre esse pedido!'), 404);
-        // }
 
         return res.success('teste', data, 200);
     } catch (error) {

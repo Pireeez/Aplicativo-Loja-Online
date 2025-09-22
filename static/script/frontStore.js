@@ -9,9 +9,9 @@
 
 const listaProdutoCategoria = (data) => {
     const mainStore = document.querySelector('.main-store');
-    mainStore.innerHTML = ''; // limpa conteúdo inicial
+    mainStore.innerHTML = '';
 
-    // Agrupar produtos por categoria
+    //agrupar produtos por categoria
     const produtosPorCategoria = {};
     data.forEach((produto) => {
         if (!produtosPorCategoria[produto.categoria]) {
@@ -102,7 +102,6 @@ const listaProdutoCategoria = (data) => {
 let totalCarrinho = 0;
 const sendProdutoCarrinho = (produto) => {
     try {
-        console.log(produto);
         const cartItems = document.createElement('div');
         cartItems.classList.add('cart-items');
 
