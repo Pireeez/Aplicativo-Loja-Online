@@ -165,7 +165,7 @@ h2 {
 
 /* Coluna de ações */
 .table tbody td:last-child {
-    text-align: right;
+    text-align: left;
 }
 
 /* cores dos status */

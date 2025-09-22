@@ -6,6 +6,7 @@ const app = express();
 const categoriaRoutes = require('./routes/categoria');
 const produtoRoutes = require('./routes/produto');
 const pedidoRoutes = require('./routes/pedido');
+const carrinhoRoute = require('./routes/carrinho');
 
 app.use(express.json());
 app.use(express.static('static'));
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use('/categoria', categoriaRoutes);
 app.use('/produto', produtoRoutes);
 app.use('/pedido', pedidoRoutes);
+app.use('/carrinho', carrinhoRoute);
 app.use((err, req, res, next) => {
     console.error(err.stack);
 

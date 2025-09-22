@@ -13,7 +13,8 @@ const sql = {
     statusCategoria: 'SELECT status FROM Categorias WHERE id_categoria = ?',
     updateCategoria: (arg) => `UPDATE Categorias SET ${arg} WHERE id_categoria = ?`,
 
-    //Pedidos
+    //Carrinho
+    existeProdutoCarrinho: `SELECT COUNT(*) AS existeProduto FROM Carrinho WHERE id_produto = ?`,
 };
 
 module.exports = sql;

@@ -14,7 +14,7 @@
 /* Caixa do modal */
 .box-overlay {
     background: white;
-    width: 400px;
+    width: 600px;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -147,4 +147,11 @@ input:checked + .slider:before {
 .btn-create-categoria:hover {
     background-color: var(--btn-backgroundHover);
     cursor: pointer;
+}
+
+.container-pedido-details {
+    border: 1px solid rgb(224, 224, 224);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
 }

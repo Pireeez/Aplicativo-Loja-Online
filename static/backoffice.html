@@ -94,15 +94,19 @@
                     <button id="btn-filtraPedido"><img src="./img/filterPedido.png"></button>
                 </div>
                 <div class="container-data">
-                    <ul class="title-line">
-                        <li>ID</li>
-                        <li>Data</li>
-                        <li>Qtde Itens</li>
-                        <li>Valor Total</li>
-                        <li>Detalhes</li>
-                    </ul>
-                    <div class="data">
-                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr class="title-line">
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Qtde Itens</th>
+                                <th>Valor Total</th>
+                                <th>Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>
@@ -235,6 +239,58 @@
                 <button id="btn-update-produto" class="btn-create-categoria">Salvar Alterações</button>
 
             </div>
+        </div>
+
+        <div id="overlay-details-pedido" class="overlay">
+            <div class="box-overlay">
+                <div class="box-header">
+                    <h3>Detalhes do Pedido</h3>
+                    <p onclick="exitBox()">X</p>
+                </div>
+                <div class="container-pedido-details">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</p>
+                                <th>Qtde de Itens</p>
+                                <th>Valor Total</p>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="data-pedido"></td>
+                                <td id="qtd-itens"></td>
+                                <td id="valor-total"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <section class="details-conteiner">
+                    <div class="header">
+                        <h2>Produtos</h2>
+                    </div>
+                    <div class="container-data">
+                        <table class="table">
+                            <thead>
+                                <tr class="title-line">
+                                    <th>Produto</th>
+                                    <th>Qtd Itens</th>
+                                    <th>Preço Unitário</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
         </div>
 
         <div class="box-sucess" id="sucessBox">
