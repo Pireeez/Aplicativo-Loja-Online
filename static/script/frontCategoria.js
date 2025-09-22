@@ -142,8 +142,8 @@ const displayBoxUpdate = (ulChildren) => {
 const sendUpdateCategoria = async (payload) => {
     try {
         const data = await updateCategoria(payload);
-
-        //tratativa de status
+        console.log(data);
+        //tratativa de statu    s
         if (data.status === 200) {
             boxMessage(data.message, data.status);
             await displayListCategoria();

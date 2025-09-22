@@ -109,9 +109,9 @@ const displayNewProduto = async () => {
         });
 
         //botão que envia o novo produto
-        const btnCeate = document.querySelector('#btn-new-produto');
+        const btnCreateProduto = document.querySelector('#btn-new-produto');
 
-        btnCeate.addEventListener('click', async () => {
+        btnCreateProduto.addEventListener('click', async () => {
             try {
                 const findCategoria = data.find((item) => item.nome === select.value);
                 if (!findCategoria) {
@@ -121,7 +121,7 @@ const displayNewProduto = async () => {
                     return;
                 }
                 const fileInput = document.querySelector('.fileElem');
-                const dataMap = {
+                const produtoPayload = {
                     nome: document.querySelector('#nomeProduto').value,
                     descricao: document.querySelector('#descricaoProduto').value,
                     categoria: Number(findCategoria.id_categoria),
@@ -131,9 +131,9 @@ const displayNewProduto = async () => {
                     imagem: fileInput.files[0] || null,
                 };
                 const msg = [];
-                for (let key in dataMap) {
+                for (let key in produtoPayload) {
                     if (key === 'nome' || key === 'preco' || key === 'estoque') {
-                        if (!dataMap[key]) {
+                        if (!produtoPayload[key]) {
                             const campo = document.querySelector(`#${key}Produto`);
                             campo.style.border = '1px solid red';
                             campo.addEventListener('input', () => (campo.style.border = ''));
@@ -141,7 +141,7 @@ const displayNewProduto = async () => {
                         }
                     }
                     if (key === 'estoque') {
-                        if (dataMap[key] <= 0) {
+                        if (produtoPayload[key] <= 0) {
                             return boxMessage('Estoque não pode ser 0 ou Negativo!');
                         }
                     }
@@ -153,8 +153,8 @@ const displayNewProduto = async () => {
                 }
 
                 const formData = new FormData();
-                for (let key in dataMap) {
-                    formData.append(key, dataMap[key]);
+                for (let key in produtoPayload) {
+                    formData.append(key, produtoPayload[key]);
                 }
 
                 const result = await createProduto(formData);
@@ -259,7 +259,7 @@ const displayUpdateProduto = async (item) => {
                 }
 
                 const res = await updateProduto(formData);
-                boxMessage(res.message);
+                boxMessage(res.message, 200);
                 exitBox();
                 displayListProduto();
             } catch (error) {

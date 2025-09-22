@@ -59,8 +59,6 @@ const updateCategoria = async (req, res, next) => {
         const alteracao = [];
         const params = [];
 
-        console.log(body);
-
         for (key in body) {
             if (key === 'status') {
                 if (typeof body[key] !== 'boolean') {
@@ -69,7 +67,7 @@ const updateCategoria = async (req, res, next) => {
             }
             if (key === 'id_categoria') continue;
             if (arrayColunas.includes(key)) {
-                if (body[key] !== undefined || body[key] !== '' || body[key] !== null) {
+                if (body[key] !== undefined && body[key] !== '' && body[key] !== null) {
                     alteracao.push(`${key} = ?`);
                     params.push(body[key]);
                 } else {
@@ -95,7 +93,7 @@ const updateCategoria = async (req, res, next) => {
         }
 
         if (data.changes !== 0) {
-            return res.success(mSuccess.updated(body.nome), data, 200);
+            return res.success(mSuccess.updated, data, 200);
         }
     } catch (error) {
         next(error);

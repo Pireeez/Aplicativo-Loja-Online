@@ -108,6 +108,6 @@ const displayFilter = () => {
 
 const clearFilter = () => {
     document.querySelectorAll('#dt-inicial, #dt-final, #value-min, #value-max').forEach((el) => (el.value = ''));
-    //const btnClearFilter = document.querySelector('#btn-clear-filter');
-    //const btnFilter = document.querySelector('#btn-filter');
 };
+
+const filterPedido = () => {};
