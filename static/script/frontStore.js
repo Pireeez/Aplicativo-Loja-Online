@@ -102,11 +102,61 @@ const listaProdutoCategoria = (data) => {
 const sendProdutoCarrinho = (produto) => {
     try {
         console.log(produto);
-        const payload = {
-            id_produto: produto.id_produto,
-            quantidade: 1,
-            valor: produto.preco,
-        };
+        const cartItems = document.createElement('div');
+        cartItems.classList.add('cart-items');
+
+        const imgItens = document.createElement('div');
+        imgItens.classList.add('img-items');
+
+        const valorTotal = document.createElement('h3');
+        valorTotal.textContent = formataPreco(produto.preco);
+
+        const previwCar = document.createElement('img');
+        previwCar.src = produto.imagem;
+        previwCar.classList.add('previw-car');
+
+        const nameDesc = document.createElement('div');
+        nameDesc.classList.add('name-desc');
+
+        const h4Name = document.createElement('h4');
+        h4Name.textContent = produto.nome;
+
+        const pDesc = document.createElement('p');
+        pDesc.textContent = limitaCaracter(produto.descricao);
+
+        const qtdProduto = document.createElement('div');
+        qtdProduto.classList.add('qtd-produto');
+
+        const selectQtd = document.createElement('select');
+
+        for (let i = 1; i < produto.estoque; i++) {
+            const option = document.createElement('option');
+            option.textContent = i;
+            selectQtd.appendChild(option);
+        }
+
+        const deleteProduto = document.createElement('div');
+        deleteProduto.classList.add('delete-produto');
+
+        const imgDelete = document.createElement('img');
+        imgDelete.src = './img/delete.png';
+
+        cartItems.appendChild(imgItens);
+        imgItens.appendChild(previwCar);
+        imgItens.appendChild(nameDesc);
+
+        nameDesc.appendChild(h4Name);
+        nameDesc.appendChild(pDesc);
+        nameDesc.appendChild(qtdProduto);
+
+        qtdProduto.appendChild(selectQtd);
+        qtdProduto.appendChild(deleteProduto);
+
+        deleteProduto.appendChild(imgDelete);
+
+        imgItens.appendChild(valorTotal);
+
+        document.querySelector('#carrinho').append(cartItems);
     } catch (error) {
         console.error(error);
     }
