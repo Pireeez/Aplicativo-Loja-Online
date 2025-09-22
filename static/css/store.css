@@ -93,8 +93,8 @@ p {
     border: 1px solid rgb(216, 216, 216);
     border-radius: 10px;
     width: 48%;
-    height: 350px;
-    margin-bottom: 15px;
+    height: 380px;
+    margin-bottom: 30px;
 }
 .info-img {
     padding: 10px;
@@ -105,6 +105,7 @@ p {
 .info-text {
     display: flex;
     flex-direction: column;
+    height: 100%; /* ocupa toda altura disponível */
     align-items: start;
     margin-top: 25px;
     padding: 10px;
@@ -123,9 +124,18 @@ p {
     border: none;
     color: white;
     border-radius: 10px;
+    margin-top: auto; /* empurra o botão pro final */
+}
+
+.btn-container {
+    display: flex;
 }
 .sem-estoque {
     color: red;
+}
+
+.info-produto button.btn-disabled {
+    background-color: rgb(228, 228, 228);
 }
 /*MAIN*/
 

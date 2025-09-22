@@ -58,7 +58,7 @@ const listaProdutoCategoria = (data) => {
             infoProduto.className = 'info-text';
 
             const h3Produto = document.createElement('h3');
-            h3Produto.textContent = item.nome;
+            h3Produto.textContent = limitaCaracter(item.nome);
 
             const pProduto = document.createElement('p');
             pProduto.textContent = limitaCaracter(item.descricao);
@@ -70,23 +70,29 @@ const listaProdutoCategoria = (data) => {
             infoProduto.appendChild(pProduto);
             infoProduto.appendChild(h4Produto);
 
-            // se não tem estoque, mostra texto
-            if (item.estoque === 0) {
-                const semEstoque = document.createElement('p');
-                semEstoque.className = 'sem-estoque';
-                semEstoque.textContent = 'Sem estoque';
-                infoProduto.appendChild(semEstoque);
-            }
-
             // botão
             const btnProduto = document.createElement('button');
             btnProduto.textContent = 'Adicionar ao Carrinho';
-            infoProduto.appendChild(btnProduto);
 
+            // se não tem estoque, mostra texto
+            if (item.estoque === 0 || item.status === 0) {
+                const semEstoque = document.createElement('p');
+                semEstoque.className = 'sem-estoque';
+                semEstoque.textContent = 'Sem estoque';
+
+                btnProduto.disabled = true;
+                btnProduto.classList.add('btn-disabled');
+
+                infoProduto.appendChild(semEstoque);
+            }
+
+            infoProduto.appendChild(btnProduto);
             // montar card
             divContainer.appendChild(divImg);
             divContainer.appendChild(infoProduto);
             sectionContainer.appendChild(divContainer);
+
+            btnProduto.addEventListener('click');
         });
     }
 };
