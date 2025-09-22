@@ -29,8 +29,11 @@ p {
     color: var(--text-p-color);
 }
 
-img {
-    max-width: 50px;
+.info-img img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 .grid {
     display: grid;
