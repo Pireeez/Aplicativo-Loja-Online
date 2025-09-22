@@ -99,6 +99,7 @@ const listaProdutoCategoria = (data) => {
     }
 };
 
+let totalCarrinho = 0;
 const sendProdutoCarrinho = (produto) => {
     try {
         console.log(produto);
@@ -157,6 +158,8 @@ const sendProdutoCarrinho = (produto) => {
         imgItens.appendChild(valorTotal);
 
         document.querySelector('#carrinho').append(cartItems);
+        totalCarrinho += produto.preco * 1;
+        document.querySelector('#valueTotal').textContent = `Valor Total: ${formataPreco(totalCarrinho)}`;
     } catch (error) {
         console.error(error);
     }
