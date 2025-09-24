@@ -160,3 +160,7 @@ p {
     background-color: rgba(224, 224, 224, 0.479);
     z-index: 1;
 }
+
+#exibe-message {
+    color: black;
+}

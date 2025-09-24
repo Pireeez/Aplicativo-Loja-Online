@@ -6,13 +6,21 @@ const sql = require('../library/sql');
 const addCarrinho = async (req, res, next) => {
     try {
         const { id_produto, quantidade, valor } = req.body;
-        //vai entrar com produto e a quantidade
-        //pegar o valor total referente aquele pedido
 
         const verificaProduto = await getQuery(sql.existeProdutoCarrinho, [id_produto]);
 
         if (verificaProduto.existeProduto !== 0) {
-            return next(ApiError('Produto já adicionado ao carrinho!', 400));
+            const data = await runQuery(
+                `
+                UPDATE Carrinho
+                SET quantidade = ?, valor_unitario = ?
+                WHERE id_produto = ?
+                `,
+                [quantidade, valor, id_produto]
+            );
+            if (data.changes !== 0) {
+                return res.success(mSuccess.custom('Produto adicionado ao carrinho!'), data, 200);
+            }
         }
         const data = await runQuery(
             `
@@ -21,7 +29,9 @@ const addCarrinho = async (req, res, next) => {
             [id_produto, quantidade, valor]
         );
 
-        res.success(mSuccess.custom('Produto adicionado ao carrinho!'), data, 200);
+        if (data.changes !== 0) {
+            return res.success(mSuccess.custom('Produto adicionado ao carrinho!'), data, 200);
+        }
     } catch (error) {
         next(error);
     }
@@ -65,7 +75,7 @@ const updateQuantidadeCarrinho = async (req, res, next) => {
             [quantidade, id_produto]
         );
 
-        res.success(mSuccess.updated, data, 200);
+        return res.success(mSuccess.updated, data, 200);
     } catch (error) {
         next(error);
     }
@@ -80,7 +90,7 @@ const deleteProdutoCarrinho = async (req, res, next) => {
         const data = await runQuery(`DELETE FROM Carrinho WHERE id_produto = ?`, [id]);
 
         if (data.changes !== 0) {
-            return res.success(mSuccess.deleted, data, 200);
+            return res.success(mSuccess.custom('Produto deletado do carrinho!'), data, 200);
         }
         console.log(data);
     } catch (error) {

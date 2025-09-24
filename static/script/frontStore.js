@@ -25,6 +25,15 @@ const getCarrinhoProduto = async () => {
     }
 };
 
+const updateCarrinho = async (payload) => {
+    try {
+        const data = axios.patch('/carrinho', payload).then((res) => res.data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 const deleteCarrinhoProduto = async (id) => {
     try {
         const data = axios.delete(`/carrinho/${id}`).then((res) => res.data);
@@ -132,27 +141,34 @@ const listaProdutoCategoria = (data) => {
             sectionContainer.appendChild(divContainer);
 
             btnProduto.addEventListener('click', () => {
+                //quando clicar adicionar +1 desse produto no carrinho
                 sendProdutoCarrinho(item);
             });
         });
     }
 };
-
-const sendProdutoCarrinho = async (produtopayload) => {
+const carrinhoContagem = {};
+const sendProdutoCarrinho = async (produto) => {
     try {
+        if (!carrinhoContagem[produto.id_produto]) {
+            carrinhoContagem[produto.id_produto] = 0;
+        }
+
+        // incrementa a quantidade do produto específico
+        carrinhoContagem[produto.id_produto] += 1;
+
         const payload = {
-            id_produto: produtopayload.id_produto,
-            quantidade: 1,
-            valor: produtopayload.preco,
+            id_produto: produto.id_produto,
+            quantidade: carrinhoContagem[produto.id_produto],
+            valor: produto.preco * carrinhoContagem[produto.id_produto],
         };
 
         const dataPostCarrinho = await postCarrinhoProduto(payload);
 
-        if (dataPostCarrinho === 200) {
+        if (dataPostCarrinho.status === 200) {
             return boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
         }
     } catch (error) {
-        console.log(error.response.data.message);
         boxMessage(error.response.data.message, error.response.data.status);
     }
 };
@@ -160,12 +176,17 @@ const sendProdutoCarrinho = async (produtopayload) => {
 const listProdutoCarrinho = async () => {
     document.getElementById('cartModal').style.display = 'flex';
     try {
+        let qtdItens = 0;
         let totalCarrinho = 0;
 
         const dataGetCarrinho = await getCarrinhoProduto();
         const data = dataGetCarrinho.data;
 
         document.querySelector('#carrinho').innerHTML = '';
+        if (data.length === 0) {
+            document.querySelector('#valueTotal').textContent = `Valor Total: $0,00`;
+            document.querySelector('#qtd-itens-car').textContent = ``;
+        }
 
         for (produto of data) {
             const cartItems = document.createElement('div');
@@ -194,11 +215,13 @@ const listProdutoCarrinho = async () => {
             qtdProduto.classList.add('qtd-produto');
 
             const selectQtd = document.createElement('select');
+
             for (let i = 1; i <= produto.estoque; i++) {
                 const option = document.createElement('option');
                 option.textContent = i;
                 selectQtd.appendChild(option);
             }
+            selectQtd.value = produto.quantidade;
 
             const deleteProduto = document.createElement('div');
             deleteProduto.classList.add('delete-produto');
@@ -217,26 +240,51 @@ const listProdutoCarrinho = async () => {
             deleteProduto.appendChild(imgDelete);
             imgItens.appendChild(valorTotal);
             document.querySelector('#carrinho').append(cartItems);
+
             totalCarrinho += produto.totalProduto * 1;
             document.querySelector('#valueTotal').textContent = `Valor Total: ${formataPreco(totalCarrinho)}`;
 
             deleteProduto.setAttribute('data-id', produto.id_produto);
-
             deleteProduto.addEventListener('click', (e) => {
                 const idProduto = e.currentTarget.getAttribute('data-id');
-
                 sendDeleteCarrinhoProduto(Number(idProduto));
             });
+
+            selectQtd.setAttribute('data-id', produto.id_produto);
+            selectQtd.addEventListener('change', (e) => {
+                const idProduto = e.currentTarget.getAttribute('data-id');
+                sendUpdateQtdCarrinho(Number(idProduto), Number(selectQtd.value));
+            });
+            document.querySelector('#qtd-itens-car').textContent = `${(qtdItens += 1)} Itens`;
         }
     } catch (error) {
         console.log(error);
     }
 };
 
+const sendUpdateQtdCarrinho = async (idProduto, qtdUpdate) => {
+    try {
+        const payload = {
+            id_produto: idProduto,
+            quantidade: qtdUpdate,
+        };
+
+        const data = await updateCarrinho(payload);
+
+        if (data.status === 200) {
+            boxMessage(data.message, data.status);
+            listProdutoCarrinho();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
 const sendDeleteCarrinhoProduto = async (produtoDelete) => {
     try {
         const data = await deleteCarrinhoProduto(produtoDelete);
+        console.log(data);
         if (data.changes !== 0) {
+            boxMessage(data.message, data.status);
             listProdutoCarrinho();
         }
     } catch (error) {
