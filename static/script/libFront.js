@@ -139,16 +139,11 @@ function handleFiles(files, preview) {
     }
 }
 
-const cartBtn = document.getElementById('cartBtn');
 const cartModal = document.getElementById('cartModal');
 const closeCart = document.getElementById('closeCart');
 
-cartBtn.addEventListener('click', () => {
-    cartModal.style.display = 'flex'; // abre modal
-});
-
 closeCart.addEventListener('click', () => {
-    cartModal.style.display = 'none'; // fecha modal
+    cartModal.style.display = 'none';
 });
 
 // fecha se clicar fora do conteúdo

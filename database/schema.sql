@@ -4,8 +4,10 @@
 -- status BOOLEAN
 -- );
 
--- DROP TABLE Categorias;
+--DROP TABLE Categorias;
 -- DROP TABLE Produtos
+
+
 
 
 -- CREATE TABLE Produtos (

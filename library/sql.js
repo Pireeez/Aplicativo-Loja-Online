@@ -7,7 +7,7 @@ const sql = {
     updateProduto: (arg) => `UPDATE Produtos SET ${arg} WHERE id_produto = ?`,
 
     //Categoria
-    nomeExisteCategoria: `SELECT COUNT(*)AS nome FROM Categorias WHERE nome = ?`,
+    nomeExisteCategoria: `SELECT nome FROM Categorias`,
     insertCategoria: `INSERT INTO Categorias (nome, status) VALUES (?,?)`,
     filtraAllCategoria: 'SELECT id_categoria, nome, status FROM Categorias',
     statusCategoria: 'SELECT status FROM Categorias WHERE id_categoria = ?',

@@ -40,7 +40,7 @@ const displayListCategoria = async () => {
         const { data } = await getListaCategoria();
 
         //se não existe nenhuma categoria exibe menssagem
-        if (data.status === 404) {
+        if (data.status === 404 || data.status === 406) {
             return boxMessage(data.message, data.status);
         }
 
@@ -200,11 +200,7 @@ const sendNewCategoria = async () => {
         status: checkStatus.checked,
     };
 
-    console.log(payload);
-
     const data = await createNewCategoria(payload);
-
-    //tratativa de erro
     if (data.status === 400) {
         boxMessage(data.message, data.status);
         inputName.style.border = '1px solid red';

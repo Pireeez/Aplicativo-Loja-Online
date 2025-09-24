@@ -158,8 +158,10 @@ const sendProdutoCarrinho = async (produtopayload) => {
 };
 
 const listProdutoCarrinho = async () => {
+    document.getElementById('cartModal').style.display = 'flex';
     try {
         let totalCarrinho = 0;
+
         const dataGetCarrinho = await getCarrinhoProduto();
         const data = dataGetCarrinho.data;
 

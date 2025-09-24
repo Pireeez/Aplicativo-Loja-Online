@@ -1,5 +1,6 @@
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
 const { ApiError } = require('../errors/library');
+const { normalizar } = require('../lib');
 const { mError, mSuccess } = require('../library/message');
 const sql = require('../library/sql');
 
@@ -23,9 +24,11 @@ const createCategoria = async (req, res, next) => {
             return next(ApiError(mError.digiteCategoria, 400));
         }
 
-        const verificaCategoria = await getQuery(sql.nomeExisteCategoria, nome);
+        const verificaCategoria = await allQuery(sql.nomeExisteCategoria, []);
 
-        if (verificaCategoria.nome !== 0) {
+        const existeNome = verificaCategoria.find((item) => normalizar(item.nome) === normalizar(nome));
+
+        if (existeNome) {
             return next(ApiError(mError.existeCategoria, 406));
         }
 
