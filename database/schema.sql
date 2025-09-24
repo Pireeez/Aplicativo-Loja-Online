@@ -88,6 +88,8 @@ JOIN Produtos pd ON pd.nome = vt.nome
 WHERE p.id_pedido = ?
 ORDER BY vt.valor_total DESC;
 
+DELETE FROM Carrinho
+
 
 
 

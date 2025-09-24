@@ -44,6 +44,7 @@ const displayListProduto = async () => {
             const tr = document.createElement('tr');
 
             for (key in item) {
+                if (key === 'statusCategoria') continue;
                 if (key === 'imagem') continue;
                 const td = document.createElement('td');
 

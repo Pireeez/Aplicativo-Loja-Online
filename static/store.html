@@ -11,6 +11,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="./css/store.css">
     <link rel="stylesheet" href="./css/carrinho.css">
+    <link rel="stylesheet" href="./css/boxMessage.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./script/frontProdutos.js" defer></script>
     <script src="./script/libFront.js" defer></script>
@@ -83,7 +84,7 @@
         </section>
     </div>
 
-    <div class="cart-shopping" id="cartBtn">
+    <div class="cart-shopping" id="cartBtn" onclick="listProdutoCarrinho()">
         <img src="./img/carrinho.png" alt="">
     </div>
 
@@ -100,6 +101,8 @@
             <div id="carrinho">
 
             </div>
+
+
             <div class="btn-value">
                 <div class="value">
                     <h2 id="valueTotal">Valor Total: </h2>
@@ -109,7 +112,16 @@
 
         </div>
     </div>
+
+    <div class="box-sucess" id="sucessBox">
+        <div class="exitDiv">
+            <p onclick="exitBoxMessage()">X</p>
+        </div>
+
+        <p id="exibe-message"></p>
     </div>
+
+
 </body>
 
 </html>

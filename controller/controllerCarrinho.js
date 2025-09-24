@@ -71,4 +71,21 @@ const updateQuantidadeCarrinho = async (req, res, next) => {
     }
 };
 
-module.exports = { addCarrinho, exibeCarrinho, updateQuantidadeCarrinho };
+const deleteProdutoCarrinho = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        console.log(typeof id);
+
+        const data = await runQuery(`DELETE FROM Carrinho WHERE id_produto = ?`, [id]);
+
+        if (data.changes !== 0) {
+            return res.success(mSuccess.deleted, data, 200);
+        }
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+module.exports = { addCarrinho, exibeCarrinho, updateQuantidadeCarrinho, deleteProdutoCarrinho };

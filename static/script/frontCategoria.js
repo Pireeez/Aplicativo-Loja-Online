@@ -47,13 +47,13 @@ const displayListCategoria = async () => {
         //formatando e exibindo elementos da API na tabela
         const tbody = document.querySelector('.table tbody');
         tbody.innerHTML = '';
-
         data.forEach((obj) => {
             const tr = document.createElement('tr');
 
             for (let key in obj) {
                 const td = document.createElement('td');
                 td.textContent = obj[key];
+
                 if (key === 'status') {
                     td.textContent = formataStatus(obj[key]);
                     td.className = formataCor(obj[key]);

@@ -155,3 +155,8 @@ p {
     z-index: 1000; /* fica acima do conteúdo */
     transition: transform 0.2s ease;
 }
+
+.info-produto.dis {
+    background-color: rgba(224, 224, 224, 0.479);
+    z-index: 1;
+}
