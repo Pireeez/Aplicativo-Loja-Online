@@ -1,6 +1,7 @@
 const sql = {
     //Produto
     sumEstoqueProduto: `SELECT SUM(estoque) AS totalEstoque FROM Produtos WHERE id_categoria = ?`,
+    estoqueProdutoUpdate: `SELECT id_produto ,nome ,estoque AS totalEstoque FROM Produtos WHERE id_categoria = ?`,
     existeNomeProduto: `SELECT COUNT(*) AS existeNome FROM Produtos WHERE nome = ?`,
     insertProdutos: `INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     filtraAllProdutos: `SELECT p.id_produto, p.nome, p.descricao, c.nome AS categoria, c.status AS statusCategoria, p.preco, p.estoque, p.status, p.imagem FROM Produtos p JOIN Categorias c ON c.id_categoria = p.id_categoria `,

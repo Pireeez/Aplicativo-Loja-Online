@@ -142,9 +142,9 @@ function handleFiles(files, preview) {
 const cartModal = document.getElementById('cartModal');
 const closeCart = document.getElementById('closeCart');
 
-closeCart.addEventListener('click', () => {
+const exitCarrinho = () => {
     cartModal.style.display = 'none';
-});
+};
 
 // fecha se clicar fora do conteúdo
 window.addEventListener('click', (e) => {

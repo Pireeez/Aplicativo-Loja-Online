@@ -44,5 +44,7 @@ app.use((err, req, res, next) => {
 // (Adicionaremos o middleware de erro aqui no próximo módulo)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta http://localhost:${port}/backoffice.html`);
+    console.log(
+        `Servidor rodando na porta http://localhost:${port}/backoffice.html ou http://localhost:${port}/store.html`
+    );
 });

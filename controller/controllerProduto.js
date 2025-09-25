@@ -36,6 +36,10 @@ const createProdutos = async (req, res, next) => {
         estoque = Number(estoque);
         status = status === 'false' ? false : true;
 
+        if (estoque > 100) {
+            return next(ApiError(mError.limiteEstoque, 400));
+        }
+
         //quantidade de estoque excedido
         const qtdEstoque = await getQuery(sql.sumEstoqueProduto, [categoria]);
         if (qtdEstoque.totalEstoque > 100) {
@@ -52,11 +56,6 @@ const createProdutos = async (req, res, next) => {
         //campos obrigatório (preco, estoque) = null para caso tenha 0
         if (!nome || preco == null || estoque == null || !categoria) {
             return next(ApiError(mError.campoObrigatorio, 400));
-        }
-
-        //limite de estoque
-        if (estoque > 100) {
-            return next(ApiError(mError.limiteEstoque, 400));
         }
 
         //preco e estoque não podem ser valores negativos
@@ -76,10 +75,6 @@ const createProdutos = async (req, res, next) => {
         imagem = req.file ? `/uploads/${req.file.filename}` : imagem;
 
         const data = await runQuery(sql.insertProdutos, [nome, descricao, categoria, preco, estoque, status, imagem]);
-
-        if (data.code === 'SQLITE_CONSTRAINT') {
-            return next(ApiError(mError.limiteEstoque, 400));
-        }
 
         if (data.changes !== 0) {
             res.success(mSuccess.created(nome), data, 201);
@@ -117,13 +112,29 @@ const updateProdutos = async (req, res, next) => {
         bodyUpdate.estoque = Number(bodyUpdate.estoque);
         bodyUpdate.status = Boolean(bodyUpdate.status === 'false' ? false : true);
 
-        if (bodyUpdate.estoque > 100) {
+        if (bodyUpdate.estoque > 99) {
             return next(ApiError(mError.limiteEstoque, 406));
         }
 
-        //preco e estoque não podem ser valores negativos
         if (bodyUpdate.preco < 0 || bodyUpdate.estoque < 0) {
             return next(ApiError(mError.valoresNegativos, 400));
+        }
+
+        const dataEstoqueProduto = await allQuery(sql.estoqueProdutoUpdate, [bodyUpdate.categoria]);
+        if (dataEstoqueProduto.length > 0) {
+            const qtdEstoqueProduto = dataEstoqueProduto.find((item) => item.id_produto !== bodyUpdate.id_produto);
+            if (qtdEstoqueProduto) {
+                const totalEstoque = qtdEstoqueProduto.totalEstoque + bodyUpdate.estoque;
+
+                if (totalEstoque > 100) {
+                    const restante = 100 - qtdEstoqueProduto.totalEstoque;
+                    return next(ApiError(mError.estoqueRestante(restante), 406));
+                }
+
+                if (qtdEstoqueProduto.totalEstoque > 100) {
+                    return next(ApiError(mError.estoqueExcedido, 406));
+                }
+            }
         }
 
         //verifico se enviou um file de imagem se não recebe a img (url)

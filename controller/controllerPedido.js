@@ -16,6 +16,10 @@ const createPedidos = async (req, res, next) => {
             FROM Carrinho c
         `);
 
+        if (!itensCarrinho) {
+            return next(ApiError('Carrinho está vázio, adicione um produto!', 404));
+        }
+
         //Calcular valor total
         const valorTotal = itensCarrinho.reduce((acc, item) => {
             return acc + item.quantidade * item.valor_unitario;
@@ -30,6 +34,10 @@ const createPedidos = async (req, res, next) => {
             [valorTotal]
         );
 
+        if (pedido.changes === 0) {
+            return next(ApiError('Falha ao fazer o pedido!', 400));
+        }
+
         //pega lastID do pedido criado
         const id_pedido = pedido.lastID;
 
@@ -41,6 +49,15 @@ const createPedidos = async (req, res, next) => {
                 VALUES (?, ?, ?, ?)
                 `,
                 [id_pedido, item.id_produto, item.quantidade, item.valor_unitario]
+            );
+
+            await runQuery(
+                `
+                UPDATE Produtos
+                SET estoque = estoque - ?
+                WHERE id_produto = ?
+                `,
+                [item.quantidade, item.id_produto]
             );
         }
 
@@ -66,7 +83,11 @@ const getAllPedidos = async (req, res, next) => {
             GROUP BY p.id_pedido
             `);
 
-        res.success('', data, 200);
+        if (!data) {
+            return next(ApiError('Nenhum Pedido realizado!', 404));
+        } else {
+            res.success('', data, 200);
+        }
     } catch (error) {
         next(error);
     }

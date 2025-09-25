@@ -91,7 +91,7 @@
     <div class="cart-modal" id="cartModal">
         <div class="cart-content">
             <div class="header-carrinho">
-                <img src="./img/arrow_black.png" class="close-cart" id="closeCart">
+                <img src="./img/arrow_black.png" class="close-cart" id="closeCart" onclick="exitCarrinho()">
                 <div>
                     <h2>Carrinho</h2>
                     <p id="qtd-itens-car"></p>
@@ -107,7 +107,7 @@
                 <div class="value">
                     <h2 id="valueTotal">Valor Total: </h2>
                 </div>
-                <button class="finalizar">Fazer Pedido</button>
+                <button class="finalizar" onclick="sendCriaPedidoCarrinho()">Fazer Pedido</button>
             </div>
 
         </div>

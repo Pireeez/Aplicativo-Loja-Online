@@ -127,6 +127,11 @@ p {
     margin-top: auto; /* empurra o botão pro final */
 }
 
+.info-produto button:hover {
+    background-color: #e8d3ee;
+    cursor: pointer;
+}
+
 .btn-container {
     display: flex;
 }

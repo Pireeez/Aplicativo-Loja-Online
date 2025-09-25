@@ -142,8 +142,7 @@ const displayBoxUpdate = (ulChildren) => {
 const sendUpdateCategoria = async (payload) => {
     try {
         const data = await updateCategoria(payload);
-        console.log(data);
-        //tratativa de statu    s
+
         if (data.status === 200) {
             boxMessage(data.message, data.status);
             await displayListCategoria();
@@ -194,7 +193,7 @@ const sendNewCategoria = async () => {
         inputName.style.border = '1px solid red';
         return;
     }
-    console.log(checkStatus.checked);
+
     const payload = {
         nome: inputName.value,
         status: checkStatus.checked,

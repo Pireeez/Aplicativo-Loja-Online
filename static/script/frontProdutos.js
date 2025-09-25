@@ -159,13 +159,12 @@ const displayNewProduto = async () => {
                 }
 
                 const result = await createProduto(formData);
-                if (result.status === 201) {
+                if (result.status === 201 || result.status === 200) {
                     boxMessage(result.message, result.status);
                     exitBox();
                     displayListProduto();
-                    return;
                 } else {
-                    boxMessage(result.message);
+                    boxMessage(result.message, result.status);
                 }
             } catch (error) {
                 console.log(error);
@@ -209,7 +208,7 @@ const displayUpdateProduto = async (item) => {
 
                 //não existe categoria
                 if (data.status === 404) {
-                    return boxMessage(data.message);
+                    return boxMessage(data.message, data.status);
                 }
 
                 //crio menu suspenso
@@ -259,10 +258,16 @@ const displayUpdateProduto = async (item) => {
                     }
                 }
 
-                const res = await updateProduto(formData);
-                boxMessage(res.message, 200);
-                exitBox();
-                displayListProduto();
+                const dataUpdate = await updateProduto(formData);
+
+                if (dataUpdate.status === 200 || dataUpdate.status === 201) {
+                    boxMessage(dataUpdate.message, dataUpdate.status);
+                    exitBox();
+                    displayListProduto();
+                } else {
+                    boxMessage(dataUpdate.message, dataUpdate.status);
+                    displayListProduto();
+                }
             } catch (error) {
                 console.log(error);
             }

@@ -43,16 +43,11 @@ const deleteCarrinhoProduto = async (id) => {
     }
 };
 
+//---
+
 const listaProdutoCategoria = (data) => {
     const mainStore = document.querySelector('.main-store');
     mainStore.innerHTML = '';
-
-    //quando clicar no produto aumentar quantidade no carrinho
-    //categoria invisível e estoque
-    //produto
-    //coerencia
-    //número na quantidade inteiros
-    //nome de categoria n pode ser o mesmo com e sem ácento
 
     //agrupar produtos por categoria
     const produtosPorCategoria = {};
@@ -74,7 +69,10 @@ const listaProdutoCategoria = (data) => {
         h2.textContent = categoria;
 
         const p = document.createElement('p');
-        p.textContent = `${produtosPorCategoria[categoria].length} Produtos`;
+        p.textContent =
+            produtosPorCategoria[categoria].length === 1
+                ? `${produtosPorCategoria[categoria].length} Produto`
+                : `${produtosPorCategoria[categoria].length} Produtos`;
 
         containerCategoria.appendChild(h2);
         containerCategoria.appendChild(p);
@@ -147,6 +145,7 @@ const listaProdutoCategoria = (data) => {
         });
     }
 };
+
 const carrinhoContagem = {};
 const sendProdutoCarrinho = async (produto) => {
     try {
@@ -165,8 +164,10 @@ const sendProdutoCarrinho = async (produto) => {
 
         const dataPostCarrinho = await postCarrinhoProduto(payload);
 
-        if (dataPostCarrinho.status === 200) {
-            return boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
+        if (dataPostCarrinho.status === 200 || dataPostCarrinho.status === 201) {
+            boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
+        } else {
+            boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
         }
     } catch (error) {
         boxMessage(error.response.data.message, error.response.data.status);
@@ -255,7 +256,9 @@ const listProdutoCarrinho = async () => {
                 const idProduto = e.currentTarget.getAttribute('data-id');
                 sendUpdateQtdCarrinho(Number(idProduto), Number(selectQtd.value));
             });
-            document.querySelector('#qtd-itens-car').textContent = `${(qtdItens += 1)} Itens`;
+            qtdItens += 1;
+            document.querySelector('#qtd-itens-car').textContent =
+                qtdItens === 1 ? `${qtdItens} Produto` : `${qtdItens} Produtos`;
         }
     } catch (error) {
         console.log(error);
@@ -279,13 +282,40 @@ const sendUpdateQtdCarrinho = async (idProduto, qtdUpdate) => {
         console.log(error);
     }
 };
+
 const sendDeleteCarrinhoProduto = async (produtoDelete) => {
     try {
         const data = await deleteCarrinhoProduto(produtoDelete);
-        console.log(data);
+
         if (data.changes !== 0) {
             boxMessage(data.message, data.status);
             listProdutoCarrinho();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+//----
+
+const postPedido = async () => {
+    try {
+        const data = await axios.post('/pedido').then((res) => res.data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const sendCriaPedidoCarrinho = async () => {
+    try {
+        const data = await postPedido();
+
+        if (data.status === 201 || data.status === 200) {
+            boxMessage(data.message, data.status);
+            document.getElementById('cartModal').style.display = 'none';
+        } else {
+            boxMessage(data.message, data.status);
         }
     } catch (error) {
         console.log(error);
