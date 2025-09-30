@@ -7,40 +7,24 @@ const addCarrinho = async (req, res, next) => {
     try {
         const { id_produto, quantidade, valor } = req.body;
 
-        const qtdEstoque = await getQuery(`SELECT estoque AS estoqueProduto FROM Produtos WHERE id_produto = ?`, [
-            id_produto,
-        ]);
-
-        if (quantidade > qtdEstoque.estoqueProduto) {
-            return next(ApiError('A quantidade ultrapassou o limite do estoque', 400));
-        }
-
-        const verificaProduto = await getQuery(sql.existeProdutoCarrinho, [id_produto]);
-
-        //upsert
-        if (verificaProduto.existeProduto !== 0) {
-            const data = await runQuery(
-                `
-                UPDATE Carrinho
-                SET quantidade = ?, valor_unitario = ?
-                WHERE id_produto = ?
-                `,
-                [quantidade, valor, id_produto]
-            );
-            if (data.changes !== 0) {
-                return res.success(mSuccess.custom('Produto adicionado ao carrinho!'), data, 200);
+        for (key in req.body) {
+            if (typeof req.body[key] === 'string') {
+                return next(ApiError(mError.campoNumerico));
             }
         }
 
-        const data = await runQuery(
-            `
-            INSERT INTO Carrinho (id_produto, quantidade, valor_unitario)
-            VALUES (?, ?, ?);`,
-            [id_produto, quantidade, valor]
-        );
+        const qtdEstoque = await getQuery(sql.qtdEstoqueProduto, [id_produto]);
 
-        if (data.changes !== 0) {
-            return res.success(mSuccess.custom('Produto adicionado ao carrinho!'), data, 200);
+        if (quantidade > qtdEstoque.estoqueProduto) {
+            return next(ApiError(mError.qtdEstoqueMax, 400));
+        }
+
+        const dataUpsertCarrinho = await runQuery(sql.upsertCarrinho, [id_produto, quantidade, valor]);
+
+        if (dataUpsertCarrinho.changes !== 0) {
+            res.success(mSuccess.custom('Produto adicionado com sucesso!'), dataUpsertCarrinho, 200);
+        } else {
+            next(ApiError(mError.falhaAddProduto, 400));
         }
     } catch (error) {
         next(error);
@@ -49,22 +33,9 @@ const addCarrinho = async (req, res, next) => {
 
 const exibeCarrinho = async (req, res, next) => {
     try {
-        const data = await allQuery(`
-            SELECT
-            p.id_produto,
-            p.nome,
-            p.descricao,
-            c.quantidade,
-            p.estoque,
-            SUM(p.preco * c.quantidade) AS totalProduto,
-            p.imagem,
-            c.data_adicao
-            FROM Carrinho c
-            JOIN Produtos p ON p.id_produto = c.id_produto
-            GROUP BY p.id_produto
-            `);
+        const dataProdutoCarrinho = await allQuery(sql.dadosProdutoCarrinho);
 
-        return res.success('', data, 200);
+        return res.success('', dataProdutoCarrinho, 200);
     } catch (error) {
         next(error);
     }
@@ -74,18 +45,13 @@ const updateQuantidadeCarrinho = async (req, res, next) => {
     try {
         const { id_produto, quantidade } = req.body;
 
-        //verificar a quantidade existente no estoque
+        if (!id_produto) {
+            return next(ApiError(mError.informeIdProduto, 400));
+        }
 
-        const data = await getQuery(
-            `
-            UPDATE Carrinho
-            SET quantidade = ?
-            WHERE id_produto = ?
-            `,
-            [quantidade, id_produto]
-        );
+        const dataUpdateQuantidadeCarrinho = await getQuery(sql.dataUpdateQuantidadeCarrinho, [quantidade, id_produto]);
 
-        return res.success(mSuccess.updated, data, 200);
+        return res.success(mSuccess.updated, dataUpdateQuantidadeCarrinho, 200);
     } catch (error) {
         next(error);
     }
@@ -95,13 +61,17 @@ const deleteProdutoCarrinho = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const data = await runQuery(`DELETE FROM Carrinho WHERE id_produto = ?`, [id]);
+        if (!id) {
+            return next(ApiError(sql.informeIdProduto, 400));
+        }
 
-        if (data.changes !== 0) {
-            return res.success(mSuccess.custom('Produto deletado do carrinho!'), data, 200);
+        const dataDeleteProdutoCarrinho = await runQuery(sql.deleteProdutoCarrinho, [id]);
+
+        if (dataDeleteProdutoCarrinho.changes !== 0) {
+            return res.success(mSuccess.deleted('Produto'), dataDeleteProdutoCarrinho, 200);
         }
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 };
 

@@ -1,6 +1,20 @@
-const getPedido = async () => {
+const getPedido = async (filter) => {
     try {
         const { data } = await axios.get('/pedido').then((res) => res.data);
+        if (filter) {
+            const { dataInicial, dataFinal, valorMin, valorMax } = filter;
+            const { data } = await axios
+                .get('/pedido', {
+                    params: {
+                        dataInicial: dataInicial,
+                        dataFinal: dataFinal,
+                        valorMin: valorMin,
+                        valorMax: valorMax,
+                    },
+                })
+                .then((res) => res.data);
+            return data;
+        }
         return data;
     } catch (error) {
         console.log(error);
@@ -110,4 +124,28 @@ const clearFilter = () => {
     document.querySelectorAll('#dt-inicial, #dt-final, #value-min, #value-max').forEach((el) => (el.value = ''));
 };
 
-const filterPedido = () => {};
+const filterPedido = async () => {
+    // const inputDataInicial = document.querySelector('#dt-inicial').value;
+    // const inputDataFinal = document.querySelector('#dt-final').value;
+    // const inputValoMin = document.querySelector('#value-min').value;
+    // const inputValoMax = document.querySelector('#value-min').value;
+    try {
+        const seletores = {
+            dataInicial: '#dt-inicial',
+            dataFinal: '#dt-final',
+            valorMin: '#value-min',
+            valorMax: '#value-max',
+        };
+        const filtroDados = Object.entries(seletores).reduce((acc, [key, id]) => {
+            const elemento = document.querySelector(id);
+            acc[key] = elemento ? elemento.value : null;
+            return acc;
+        }, {});
+
+        const dataFilterPedido = await getPedido(filtroDados);
+
+        console.log(dataFilterPedido);
+    } catch (error) {
+        console.log(error);
+    }
+};

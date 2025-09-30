@@ -35,20 +35,21 @@
 
 -- CREATE TABLE Carrinho (
 --   id_carrinho INTEGER PRIMARY KEY AUTOINCREMENT,
---   id_produto INTEGER NOT NULL,
+--   id_produto INTEGER NOT NULL UNIQUE,
 --   quantidade INTEGER NOT NULL,
 --   valor_unitario REAL NOT NULL,
 --   data_adicao DATE DEFAULT (DATETIME('now')),
 --   FOREIGN KEY (id_produto) REFERENCES Produtos(id_produto)
 -- );
 
-CREATE TABLE Pedidos (
-  id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
-  data DATE NOT NULL,
-  valor_total REAL NOT NULL
-);
+-- CREATE TABLE Pedidos (
+--   id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
+--   data DATE NOT NULL,
+--   valor_total REAL NOT NULL
+-- );
 
-DROP TABLE Pedidos
+-- DROP TABLE Pedidos
+-- DROP TABLE Itens_Pedidos
 
 
 
@@ -99,30 +100,55 @@ DROP TABLE Pedidos
 -- FROM Produtos 
 -- WHERE id_categoria = ?
 
-WITH valorTotal AS 
-            (
-                SELECT
-                    i.id_pedido,
-                    pd.nome, 
-                    SUM(i.quantidade) AS quantidade_total,
-                    i.valor_unitario,
-                    SUM(i.valor_unitario * i.quantidade) AS valor_total
-                FROM Itens_Pedidos i
-                JOIN Produtos pd ON pd.id_produto = i.id_produto 
-                GROUP BY i.id_pedido, pd.nome, i.valor_unitario
-            )
-        SELECT
-            pd.nome,
-            p.data,
-            vt.quantidade_total AS quantidade,
-            vt.valor_unitario AS preco_unitario,
-            vt.valor_total AS subtotal
-        FROM Pedidos p
-        JOIN valorTotal vt ON vt.id_pedido = p.id_pedido
-        JOIN Produtos pd ON pd.nome = vt.nome
-        WHERE p.id_pedido = ?
-        ORDER BY vt.valor_total DESC;
+-- WITH valorTotal AS 
+--             (
+--                 SELECT
+--                     i.id_pedido,
+--                     pd.nome, 
+--                     SUM(i.quantidade) AS quantidade_total,
+--                     i.valor_unitario,
+--                     SUM(i.valor_unitario * i.quantidade) AS valor_total
+--                 FROM Itens_Pedidos i
+--                 JOIN Produtos pd ON pd.id_produto = i.id_produto 
+--                 GROUP BY i.id_pedido, pd.nome, i.valor_unitario
+--             )
+--         SELECT
+--             pd.nome,
+--             p.data,
+--             vt.quantidade_total AS quantidade,
+--             vt.valor_unitario AS preco_unitario,
+--             vt.valor_total AS subtotal
+--         FROM Pedidos p
+--         JOIN valorTotal vt ON vt.id_pedido = p.id_pedido
+--         JOIN Produtos pd ON pd.nome = vt.nome
+--         WHERE p.id_pedido = ?
+--         ORDER BY vt.valor_total DESC;
 
+
+-- SELECT 
+--     pd.nome,
+--     p.data,
+--     SUM(i.quantidade) AS quantidade,
+--     i.valor_unitario AS preco_unitario,
+--     SUM(i.quantidade * i.valor_unitario) AS subtotal
+-- FROM Pedidos p
+-- JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
+-- JOIN Produtos pd ON pd.id_produto = i.id_produto
+-- WHERE p.id_pedido = ?
+-- GROUP BY pd.nome, p.data, i.valor_unitario
+-- ORDER BY subtotal DESC;
+
+
+SELECT
+  p.id_pedido,
+  p.data,
+  SUM(i.quantidade) AS totalItens,
+  SUM(i.valor_unitario * i.quantidade) AS valorTotal
+  FROM Pedidos p
+  LEFT JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
+  WHERE p.data >= "2025-09-26 00:00:00"
+  GROUP BY p.id_pedido
+  HAVING SUM(i.valor_unitario * i.quantidade) >= 6000
 
 
 

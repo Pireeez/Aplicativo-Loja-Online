@@ -1,18 +1,20 @@
-(async () => {
+const carregaProdutosCategoria = async () => {
     try {
         const { data } = await getProdutos();
         listaProdutoCategoria(data);
     } catch (error) {
         console.error(error);
     }
-})();
+};
+
+carregaProdutosCategoria();
 
 const postCarrinhoProduto = async (payload) => {
     try {
         const data = axios.post('/carrinho', payload).then((res) => res.data);
         return data;
     } catch (error) {
-        console.log(error.response.data);
+        console.log(error);
     }
 };
 
@@ -49,7 +51,6 @@ const listaProdutoCategoria = (data) => {
     const mainStore = document.querySelector('.main-store');
     mainStore.innerHTML = '';
 
-    //agrupar produtos por categoria
     const produtosPorCategoria = {};
     data.forEach((produto) => {
         if (produto.statusCategoria === 0) return;
@@ -59,9 +60,8 @@ const listaProdutoCategoria = (data) => {
         produtosPorCategoria[produto.categoria].push(produto);
     });
 
-    // Criar HTML por categoria
+    const filterProduto = document.querySelector('#input-filter-produtos');
     for (const categoria in produtosPorCategoria) {
-        // Cabeçalho da categoria
         const containerCategoria = document.createElement('div');
         containerCategoria.className = 'categoria-produto';
 
@@ -78,24 +78,20 @@ const listaProdutoCategoria = (data) => {
         containerCategoria.appendChild(p);
         mainStore.appendChild(containerCategoria);
 
-        // Container de produtos
         const sectionContainer = document.createElement('section');
         sectionContainer.className = 'container-produtos';
         mainStore.appendChild(sectionContainer);
 
-        // Produtos
         produtosPorCategoria[categoria].forEach((item) => {
             const divContainer = document.createElement('div');
             divContainer.className = 'info-produto';
 
-            // imagem
             const divImg = document.createElement('div');
             divImg.className = 'info-img';
             const imgProduto = document.createElement('img');
             imgProduto.src = item.imagem;
             divImg.appendChild(imgProduto);
 
-            // info-text
             const infoProduto = document.createElement('div');
             infoProduto.className = 'info-text';
 
@@ -112,11 +108,9 @@ const listaProdutoCategoria = (data) => {
             infoProduto.appendChild(pProduto);
             infoProduto.appendChild(h4Produto);
 
-            // botão
             const btnProduto = document.createElement('button');
             btnProduto.textContent = 'Adicionar ao Carrinho';
 
-            // se não tem estoque, mostra texto
             if (item.estoque === 0) {
                 const semEstoque = document.createElement('p');
                 semEstoque.className = 'sem-estoque';
@@ -133,38 +127,49 @@ const listaProdutoCategoria = (data) => {
             }
 
             infoProduto.appendChild(btnProduto);
-            // montar card
             divContainer.appendChild(divImg);
             divContainer.appendChild(infoProduto);
             sectionContainer.appendChild(divContainer);
 
             btnProduto.addEventListener('click', () => {
-                //quando clicar adicionar +1 desse produto no carrinho
                 sendProdutoCarrinho(item);
             });
+        });
+
+        filterProduto.addEventListener('keydown', async (event) => {
+            try {
+                if (event.key === 'Enter') {
+                    const res = await getProdutos(filterProduto.value);
+
+                    if (res.status === 200 || res.status === 201) {
+                        listaProdutoCategoria(res.data);
+                    }
+                }
+            } catch (error) {
+                boxMessage(error.response.data.message, error.response.data.status);
+                carregaProdutosCategoria();
+            }
         });
     }
 };
 
-const carrinhoContagem = {};
+let carrinhoContagem = {};
 const sendProdutoCarrinho = async (produto) => {
     try {
         if (!carrinhoContagem[produto.id_produto]) {
             carrinhoContagem[produto.id_produto] = 0;
         }
-
-        // incrementa a quantidade do produto específico
         carrinhoContagem[produto.id_produto] += 1;
 
         const payload = {
             id_produto: produto.id_produto,
             quantidade: carrinhoContagem[produto.id_produto],
-            valor: produto.preco * carrinhoContagem[produto.id_produto],
+            valor: produto.preco,
         };
 
         const dataPostCarrinho = await postCarrinhoProduto(payload);
 
-        if (dataPostCarrinho.status === 200 || dataPostCarrinho.status === 201) {
+        if (dataPostCarrinho.status === 200) {
             boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
         } else {
             boxMessage(dataPostCarrinho.message, dataPostCarrinho.status);
@@ -261,7 +266,7 @@ const listProdutoCarrinho = async () => {
                 qtdItens === 1 ? `${qtdItens} Produto` : `${qtdItens} Produtos`;
         }
     } catch (error) {
-        console.log(error);
+        boxMessage(error.response.data.message, error.response.data.status);
     }
 };
 
@@ -277,9 +282,11 @@ const sendUpdateQtdCarrinho = async (idProduto, qtdUpdate) => {
         if (data.status === 200) {
             boxMessage(data.message, data.status);
             listProdutoCarrinho();
+        } else {
+            boxMessage(data.message, data.status);
         }
     } catch (error) {
-        console.log(error);
+        boxMessage(error.response.data.message, error.response.data.status);
     }
 };
 
@@ -290,9 +297,12 @@ const sendDeleteCarrinhoProduto = async (produtoDelete) => {
         if (data.changes !== 0) {
             boxMessage(data.message, data.status);
             listProdutoCarrinho();
+            carrinhoContagem = {};
+        } else {
+            boxMessage(data.message, data.status);
         }
     } catch (error) {
-        console.log(error);
+        boxMessage(error.response.data.message, error.response.data.status);
     }
 };
 
@@ -310,14 +320,16 @@ const postPedido = async () => {
 const sendCriaPedidoCarrinho = async () => {
     try {
         const data = await postPedido();
+        console.log(data);
 
         if (data.status === 201 || data.status === 200) {
             boxMessage(data.message, data.status);
             document.getElementById('cartModal').style.display = 'none';
+            carregaProdutosCategoria();
         } else {
             boxMessage(data.message, data.status);
         }
     } catch (error) {
-        console.log(error);
+        boxMessage(error.response.data.message, error.response.data.status);
     }
 };

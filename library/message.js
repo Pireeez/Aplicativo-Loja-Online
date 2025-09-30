@@ -20,6 +20,17 @@ const mError = {
     estoqueExcedido: 'Total de estoque dessa categoria excedido!',
     existeProduto: 'Esse produto já foi cadastrado!',
     falhaAddProduto: 'Não foi possível adicionar esse Produto!',
+
+    //pedido
+    carrinhoVazio: 'Carrinho está vázio, adicione um produto!',
+    falhaPedido: 'Falha ao fazer o pedido!',
+    nenhumPedidoRealizado: 'Nenhum Pedido realizado!',
+    informeIdPedido: 'Informe o ID do pedido!',
+
+    //carrinho
+    qtdEstoqueMax: 'Quantidade máxima de estoque atingida',
+    informeIdProduto: 'Informe o ID do Produto!',
+    campoNumerico: 'Os campos devem ser numéricos!',
 };
 
 const mSuccess = {

@@ -1,9 +1,14 @@
-const getProdutos = async () => {
+const getProdutos = async (nome) => {
     try {
         const data = await axios.get('/produto').then((res) => res.data);
+
+        if (nome) {
+            const data = await axios.get(`/produto?nome=${nome}`).then((res) => res.data);
+            return data;
+        }
         return data;
     } catch (error) {
-        console.log(error);
+        boxMessage(error.response.data.message, error.response.data.status);
     }
 };
 
@@ -36,7 +41,7 @@ const displayListProduto = async () => {
     document.querySelector('.produtos-conteiner').style.display = 'block';
     try {
         //busco produtos
-        const { data } = await getProdutos();
+        const { data } = await getProdutos(null);
         const tbody = document.querySelector('.produtos-conteiner .table tbody');
         tbody.innerHTML = '';
 
