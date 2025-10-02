@@ -88,8 +88,13 @@ h3 {
     background-color: rgb(219, 219, 219);
     border-radius: 10px;
     padding: 5px;
-    width: 60px;
+    width: 80px;
     margin-right: 10px;
+}
+
+option {
+    max-height: 150px; /* Adjust as needed */
+    overflow-y: auto;
 }
 
 .delete-produto {

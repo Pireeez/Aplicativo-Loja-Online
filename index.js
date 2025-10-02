@@ -23,11 +23,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// Montar as rotas de tarefas sob o prefixo /tarefas
 app.use('/categoria', categoriaRoutes);
 app.use('/produto', produtoRoutes);
 app.use('/pedido', pedidoRoutes);
 app.use('/carrinho', carrinhoRoute);
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
 
@@ -41,7 +41,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// (Adicionaremos o middleware de erro aqui no próximo módulo)
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(

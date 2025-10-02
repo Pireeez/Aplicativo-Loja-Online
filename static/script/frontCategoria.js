@@ -1,4 +1,3 @@
-//Pega lista de categoria
 const getListaCategoria = async () => {
     try {
         const data = await axios.get('/categoria').then((res) => res.data);
@@ -8,7 +7,6 @@ const getListaCategoria = async () => {
     }
 };
 
-//cria nova categoria
 const createNewCategoria = async (payload) => {
     try {
         const data = await axios.post('/categoria', payload).then((res) => res.data);
@@ -18,7 +16,6 @@ const createNewCategoria = async (payload) => {
     }
 };
 
-//atualiza categoria
 const updateCategoria = async (payload) => {
     try {
         const data = await axios.patch('/categoria', payload).then((res) => res.data);
@@ -28,7 +25,6 @@ const updateCategoria = async (payload) => {
     }
 };
 
-//lista todas as categorias
 const displayListCategoria = async () => {
     //mostra a tabela de categoria
     document.querySelector('.categorias-conteiner').style.display = 'block';
@@ -81,7 +77,6 @@ const displayListCategoria = async () => {
     }
 };
 
-//exibe a tela de update
 const displayBoxUpdate = (ulChildren) => {
     //pego informações da tabela
     const datahtml = [];
@@ -138,34 +133,20 @@ const displayBoxUpdate = (ulChildren) => {
     });
 };
 
-//envia nova atualização para API
 const sendUpdateCategoria = async (payload) => {
     try {
         const data = await updateCategoria(payload);
 
-        if (data.status === 200) {
-            boxMessage(data.message, data.status);
-            await displayListCategoria();
-            exitBox();
-            return;
+        boxMessage(data.message, data.status);
+        if (data.status === 200 || data.status === 201) {
+            displayListCategoria();
         }
-        if (data.status === 400) {
-            boxMessage(data.message, data.status);
-            exitBox();
-            return;
-        }
-
-        if (data.status === 406) {
-            boxMessage(data.message, data.status);
-            exitBox();
-            return;
-        }
+        exitBox(); //to do:
     } catch (error) {
         console.error(error);
     }
 };
 
-//exibe o overlay de criação da nova categoria
 const displayNewCategoria = () => {
     document.querySelector('#overlay-create-categoria').style.display = 'flex';
     const checkStatus = document.querySelector('#box-status-check');
@@ -182,7 +163,6 @@ const displayNewCategoria = () => {
     });
 };
 
-//envia dados da nova categoria
 const sendNewCategoria = async () => {
     //crio variáveis de elemento html (nome, status)
     const checkStatus = document.querySelector('#box-status-check');
@@ -200,21 +180,13 @@ const sendNewCategoria = async () => {
     };
 
     const data = await createNewCategoria(payload);
-    if (data.status === 400) {
-        boxMessage(data.message, data.status);
-        inputName.style.border = '1px solid red';
-        return;
-    }
-    if (data.status === 406) {
-        boxMessage(data.message, data.status);
-        inputName.style.border = '1px solid red';
-        inputName.value = '';
-        return;
-    }
-    if (data.status === 201) {
-        boxMessage(data.message, data.status);
+
+    boxMessage(data.message, data.status);
+
+    if (data.status === 200 || data.status === 201) {
         exitBox();
-        await displayListCategoria();
-        return;
+        displayListCategoria();
     }
+
+    inputName.style.border = '1px solid red';
 };

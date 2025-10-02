@@ -26,7 +26,7 @@ const createCategoria = async (req, res, next) => {
 
         const verificaCategoria = await allQuery(sql.nomeExisteCategoria, []);
 
-        const existeNome = verificaCategoria.find((item) => normalizar(item.nome) === normalizar(nome));
+        const existeNome = verificaCategoria.find((item) => normalizar(item.nome) === normalizar(nome)); //to do
 
         if (existeNome) {
             return next(ApiError(mError.existeCategoria, 406));
@@ -36,7 +36,7 @@ const createCategoria = async (req, res, next) => {
 
         if (data.changes !== 0) {
             return res.success(mSuccess.created(nome), data, 201);
-        }
+        } //to do: erro
     } catch (error) {
         next(error);
     }
@@ -63,12 +63,15 @@ const updateCategoria = async (req, res, next) => {
         const params = [];
 
         for (key in body) {
+            if (key === 'id_categoria') {
+                continue;
+            }
             if (key === 'status') {
                 if (typeof body[key] !== 'boolean') {
                     return next(ApiError(mError.valorStatus, 400));
                 }
             }
-            if (key === 'id_categoria') continue;
+
             if (arrayColunas.includes(key)) {
                 if (body[key] !== undefined && body[key] !== '' && body[key] !== null) {
                     alteracao.push(`${key} = ?`);
@@ -83,11 +86,11 @@ const updateCategoria = async (req, res, next) => {
 
         params.push(body.id_categoria);
 
-        const categoriaAtual = await getQuery(sql.statusCategoria, [body.id_categoria]);
+        const categoriaAtual = await getQuery(sql.statusCategoria, [body.id_categoria]); //to do
 
         if (Boolean(categoriaAtual.status) === body.status) {
             return next(ApiError(mError.nenhumUpdate, 400));
-        }
+        } //to do
 
         const data = await runQuery(sql.updateCategoria(alteracao), params);
 

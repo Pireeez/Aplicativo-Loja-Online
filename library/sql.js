@@ -6,6 +6,18 @@ const sql = {
     insertProdutos: `INSERT INTO Produtos (nome, descricao, id_categoria, preco, estoque, status, imagem) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     filtraAllProdutos: `SELECT p.id_produto, p.nome, p.descricao, c.nome AS categoria, c.status AS statusCategoria, p.preco, p.estoque, p.status, p.imagem FROM Produtos p JOIN Categorias c ON c.id_categoria = p.id_categoria`,
     updateProduto: (arg) => `UPDATE Produtos SET ${arg} WHERE id_produto = ?`,
+    filtraProdutoNomeDescricao: ` SELECT
+            p.id_produto,
+            p.nome,
+            p.descricao,
+            c.nome AS categoria,
+            c.status AS statusCategoria,
+            p.preco, p.estoque,
+            p.status,
+            p.imagem
+            FROM Produtos p
+            JOIN Categorias c ON c.id_categoria = p.id_categoria
+            WHERE LOWER(p.nome) LIKE LOWER(?) OR LOWER(p.descricao) LIKE LOWER(?)`,
 
     //Categoria
     nomeExisteCategoria: `SELECT nome FROM Categorias`,
@@ -55,6 +67,17 @@ const sql = {
             GROUP BY pd.nome, p.data, i.valor_unitario
             ORDER BY subtotal DESC;
         `,
+
+    filtroPedidoDataValor: (data, value) => `SELECT
+                p.id_pedido,
+                p.data,
+                SUM(i.quantidade) AS totalItens,
+                SUM(i.valor_unitario * i.quantidade) AS valorTotal
+                FROM Pedidos p
+                LEFT JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
+                ${data}
+                GROUP BY p.id_pedido
+                ${value} `,
 };
 
 module.exports = sql;

@@ -1,9 +1,8 @@
 const getPedido = async (filter) => {
     try {
-        const { data } = await axios.get('/pedido').then((res) => res.data);
         if (filter) {
             const { dataInicial, dataFinal, valorMin, valorMax } = filter;
-            const { data } = await axios
+            const data = await axios
                 .get('/pedido', {
                     params: {
                         dataInicial: dataInicial,
@@ -14,8 +13,10 @@ const getPedido = async (filter) => {
                 })
                 .then((res) => res.data);
             return data;
+        } else {
+            const { data } = await axios.get('/pedido').then((res) => res.data);
+            return data;
         }
-        return data;
     } catch (error) {
         console.log(error);
     }
@@ -30,15 +31,17 @@ const getDetailsPedido = async (id) => {
     }
 };
 
-const displayListPedido = async () => {
+const displayListPedido = async (filter) => {
     document.querySelector('.categorias-conteiner').style.display = 'none';
     document.querySelector('.produtos-conteiner').style.display = 'none';
     document.querySelector('.pedidos-conteiner').style.display = 'block';
     try {
-        const listPedido = await getPedido();
+        const listPedido = await getPedido(filter);
 
         const tbody = document.querySelector('.pedidos-conteiner .table tbody');
         tbody.innerHTML = '';
+        //to do: logica filtro
+
         listPedido.forEach((item) => {
             const tr = document.createElement('tr');
 
@@ -87,10 +90,10 @@ const displayDetailsPedido = async (item) => {
         document.querySelector('#data-pedido').textContent = new Date(item.data).toLocaleDateString();
         document.querySelector('#qtd-itens').textContent = qtdItem;
         document.querySelector('#valor-total').textContent = formataPreco(item.valorTotal);
+
         tbody.innerHTML = '';
         listaDetailsPedido.forEach((item) => {
             const tr = document.createElement('tr');
-
             for (key in item) {
                 const td = document.createElement('td');
                 if (key === 'data') continue;
@@ -125,10 +128,6 @@ const clearFilter = () => {
 };
 
 const filterPedido = async () => {
-    // const inputDataInicial = document.querySelector('#dt-inicial').value;
-    // const inputDataFinal = document.querySelector('#dt-final').value;
-    // const inputValoMin = document.querySelector('#value-min').value;
-    // const inputValoMax = document.querySelector('#value-min').value;
     try {
         const seletores = {
             dataInicial: '#dt-inicial',
@@ -136,15 +135,20 @@ const filterPedido = async () => {
             valorMin: '#value-min',
             valorMax: '#value-max',
         };
+
         const filtroDados = Object.entries(seletores).reduce((acc, [key, id]) => {
             const elemento = document.querySelector(id);
             acc[key] = elemento ? elemento.value : null;
             return acc;
         }, {});
 
-        const dataFilterPedido = await getPedido(filtroDados);
+        const dataFilterPedido = await displayListPedido(filtroDados);
 
-        console.log(dataFilterPedido);
+        if (dataFilterPedido.status === 200 || dataFilterPedido.status === 201) {
+            displayListPedido(dataFilterPedido.data);
+        } else {
+            boxMessage(dataFilterPedido.boxMessage, dataFilterPedido.status);
+        }
     } catch (error) {
         console.log(error);
     }

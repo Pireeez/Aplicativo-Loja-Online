@@ -8,7 +8,7 @@ const getProdutos = async (nome) => {
         }
         return data;
     } catch (error) {
-        boxMessage(error.response.data.message, error.response.data.status);
+        console.log(error);
     }
 };
 
@@ -34,7 +34,6 @@ const updateProduto = async (formData) => {
     }
 };
 
-//lista produto
 const displayListProduto = async () => {
     document.querySelector('.categorias-conteiner').style.display = 'none';
     document.querySelector('.pedidos-conteiner').style.display = 'none';
@@ -141,6 +140,7 @@ const displayNewProduto = async () => {
                     if (key === 'nome' || key === 'preco' || key === 'estoque') {
                         if (!produtoPayload[key]) {
                             const campo = document.querySelector(`#${key}Produto`);
+
                             campo.style.border = '1px solid red';
                             campo.addEventListener('input', () => (campo.style.border = ''));
                             msg.push(key);
@@ -164,13 +164,14 @@ const displayNewProduto = async () => {
                 }
 
                 const result = await createProduto(formData);
+
+                boxMessage(result.message, result.status);
+
                 if (result.status === 201 || result.status === 200) {
-                    boxMessage(result.message, result.status);
                     exitBox();
-                    displayListProduto();
-                } else {
-                    boxMessage(result.message, result.status);
                 }
+
+                displayListProduto();
             } catch (error) {
                 console.log(error);
             }
@@ -185,7 +186,7 @@ const displayUpdateProduto = async (item) => {
         const { data } = await getListaCategoria();
         document.querySelector('#overlay-update-produto').style.display = 'flex';
 
-        const dataMapUpdate = {
+        const mapProdutoSelecionado = {
             id_produto: item.id_produto,
             nome: item.nome,
             descricao: item.descricao,
@@ -196,11 +197,8 @@ const displayUpdateProduto = async (item) => {
             imagem: item.imagem,
         };
 
-        //mapeio e informo os valores nos campos
-        //busco api
-
         const select = document.getElementById('select-update');
-        for (key in dataMapUpdate) {
+        for (key in mapProdutoSelecionado) {
             if (key === 'id_produto') continue;
             if (key === 'categoria') {
                 //exibo a categoria selecionada da lista de produto
@@ -208,7 +206,7 @@ const displayUpdateProduto = async (item) => {
                 select.id = 'select-update';
                 const opt = document.createElement('option');
                 opt.id = key;
-                opt.textContent = dataMapUpdate[key];
+                opt.textContent = mapProdutoSelecionado[key];
                 select.appendChild(opt);
 
                 //não existe categoria
@@ -220,21 +218,21 @@ const displayUpdateProduto = async (item) => {
                 data.forEach((element) => {
                     const option = document.createElement('option');
 
-                    if (element.nome === dataMapUpdate[key]) return;
+                    if (element.nome === mapProdutoSelecionado[key]) return;
                     option.textContent = element.nome;
                     select.appendChild(option);
                 });
             } else if (key === 'status') {
                 //mudo o status do checkbox
-                document.getElementById(key).checked = dataMapUpdate[key];
+                document.getElementById(key).checked = mapProdutoSelecionado[key];
                 document.getElementById('statusUpdateProduto').textContent = `Status: ${formataStatus(
                     dataMapUpdate[key]
                 )}`;
             } else if (key === 'imagem') {
                 //exibo imagem
-                document.getElementById('previewUpdate').src = dataMapUpdate[key];
+                document.getElementById('previewUpdate').src = mapProdutoSelecionado[key];
             } else {
-                document.getElementById(key).value = dataMapUpdate[key];
+                document.getElementById(key).value = mapProdutoSelecionado[key];
             }
         }
 
@@ -248,7 +246,7 @@ const displayUpdateProduto = async (item) => {
             try {
                 const formData = new FormData();
 
-                for (key in dataMapUpdate) {
+                for (key in mapProdutoSelecionado) {
                     if (key === 'categoria') {
                         const findCetegoria = data.find((item) => item.nome === select.value);
                         formData.append(key, findCetegoria.id_categoria);
@@ -265,14 +263,12 @@ const displayUpdateProduto = async (item) => {
 
                 const dataUpdate = await updateProduto(formData);
 
+                boxMessage(dataUpdate.message, dataUpdate.status);
+
                 if (dataUpdate.status === 200 || dataUpdate.status === 201) {
-                    boxMessage(dataUpdate.message, dataUpdate.status);
                     exitBox();
-                    displayListProduto();
-                } else {
-                    boxMessage(dataUpdate.message, dataUpdate.status);
-                    displayListProduto();
                 }
+                displayListProduto();
             } catch (error) {
                 console.log(error);
             }

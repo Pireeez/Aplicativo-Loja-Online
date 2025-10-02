@@ -1,17 +1,3 @@
-// Produtos
-
-// Criar e atualizar produtos via modal.
-// Campos obrigatórios: nome, preço, estoque, categoria.
-// Regras:
-//  Nome único.
-//  Preço e estoque não podem ser negativos.
-//  Estoque total por categoria ≤ 100.
-//  Preço com máscara monetária "R$".
-
-//fazer validação pela versão com procedure
-//procedure criar uma nova rota de produtos
-//fazer validação da quantidade, considerando os dados do banco do front
-
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
 const { ApiError } = require('../errors/library');
 const { mError, mSuccess } = require('../library/message');
@@ -31,8 +17,8 @@ const createProdutos = async (req, res, next) => {
 
         categoria = Number(categoria);
         preco = parseFloat(preco);
-        estoque = Number(estoque);
-        status = status === 'false' ? false : true;
+        estoque = parseInt(estoque);
+        status = status === 'true';
 
         if (estoque > 100) {
             return next(ApiError(mError.limiteEstoque, 400));
@@ -82,34 +68,18 @@ const getAllProdutos = async (req, res, next) => {
         const nome = req.query.nome;
 
         if (nome) {
-            const data = await allQuery(
-                `
-            SELECT
-            p.id_produto,
-            p.nome,
-            p.descricao,
-            c.nome AS categoria,
-            c.status AS statusCategoria,
-            p.preco, p.estoque,
-            p.status,
-            p.imagem
-            FROM Produtos p
-            JOIN Categorias c ON c.id_categoria = p.id_categoria
-            WHERE LOWER(p.nome) LIKE LOWER(?) OR LOWER(p.descricao) LIKE LOWER(?)
-            `,
-                ['%' + nome + '%', '%' + nome + '%']
-            );
+            const data = await allQuery(sql.filtraProdutoNomeDescricao, ['%' + nome + '%', '%' + nome + '%']);
 
-            if (data.length) {
+            if (data.length !== 0) {
                 res.success('', data, 200);
             } else {
-                next(ApiError('Esse produto não existe!', 404));
+                next(ApiError(mError.produtoInexistente, 404));
             }
         }
 
         const data = await allQuery(sql.filtraAllProdutos, []);
 
-        if (data.length) {
+        if (data.length !== 0) {
             res.success('', data, 200);
         } else {
             next(ApiError(mError.naoExiste, 404));
@@ -129,9 +99,13 @@ const updateProdutos = async (req, res, next) => {
         bodyUpdate.id_produto = Number(bodyUpdate.id_produto);
         bodyUpdate.preco = parseFloat(bodyUpdate.preco) || 0;
         bodyUpdate.estoque = Number(bodyUpdate.estoque);
-        bodyUpdate.status = Boolean(bodyUpdate.status === 'false' ? false : true);
+        bodyUpdate.status = bodyUpdate.status === 'true';
 
-        if (bodyUpdate.estoque > 99) {
+        if (!Number.isInteger(bodyUpdate.estoque)) {
+            return next(ApiError(mError.apenasNumeroInteiros, 400));
+        }
+
+        if (bodyUpdate.estoque > 100) {
             return next(ApiError(mError.limiteEstoque, 406));
         }
 
@@ -140,8 +114,11 @@ const updateProdutos = async (req, res, next) => {
         }
 
         const dataEstoqueProduto = await allQuery(sql.estoqueProdutoUpdate, [bodyUpdate.categoria]);
+
         if (dataEstoqueProduto.length > 0) {
             const qtdEstoqueProduto = dataEstoqueProduto.find((item) => item.id_produto !== bodyUpdate.id_produto);
+            //to do: utilizar query que retorna uma linha e uma coluna
+
             if (qtdEstoqueProduto) {
                 const totalEstoque = qtdEstoqueProduto.totalEstoque + bodyUpdate.estoque;
 
@@ -167,11 +144,12 @@ const updateProdutos = async (req, res, next) => {
                 }
             }
         }
+
         params.push(bodyUpdate.id_produto);
 
         if (alteracao.length === 0 || params.length === 0) {
             return next(ApiError(mError.nenhumUpdate, 400));
-        }
+        } //to do: tratar no inicio
 
         const data = await runQuery(sql.updateProduto(alteracao), params);
 

@@ -3,7 +3,6 @@ const { db } = require('../database/database');
 function auxQuery(metodo, sql, params) {
     return new Promise((resolve, reject) => {
         db[metodo](sql, params, function (err, res) {
-            // <--- function normal
             if (err) {
                 console.error('Erro ao executar a query', err);
                 reject(err);

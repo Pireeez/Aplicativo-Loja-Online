@@ -1,9 +1,3 @@
-// Pedidos
-
-// Listagem de pedidos realizados pelos usuários da loja.
-// Filtros por data e valor total.
-// Modal para visualizar itens de cada pedido.
-
 const { runQuery, getQuery, allQuery } = require('../database/database-helper');
 const { ApiError } = require('../errors/library');
 const { mError, mSuccess } = require('../library/message');
@@ -47,7 +41,6 @@ const getAllPedidos = async (req, res, next) => {
         const filter = req.query;
 
         if (filter) {
-            let { dataInicial, dataFinal, valorMin, valorMax } = filter;
             const params = [];
             const filtroData = [];
             const filtroValor = [];
@@ -84,21 +77,7 @@ const getAllPedidos = async (req, res, next) => {
                 filtroValor[0] = 'HAVING SUM(i.valor_unitario * i.quantidade) BETWEEN ? AND ?';
             }
 
-            const FilterPedido = await allQuery(
-                `
-                SELECT
-                p.id_pedido,
-                p.data,
-                SUM(i.quantidade) AS totalItens,
-                SUM(i.valor_unitario * i.quantidade) AS valorTotal
-                FROM Pedidos p
-                LEFT JOIN Itens_Pedidos i ON i.id_pedido = p.id_pedido
-                ${filtroData}
-                GROUP BY p.id_pedido
-                ${filtroValor}
-                `,
-                params
-            );
+            const FilterPedido = await allQuery(sql.filtroPedidoDataValor(filtroData, filtroValor), params);
 
             res.success('', FilterPedido, 200);
 

@@ -20,6 +20,8 @@ const mError = {
     estoqueExcedido: 'Total de estoque dessa categoria excedido!',
     existeProduto: 'Esse produto já foi cadastrado!',
     falhaAddProduto: 'Não foi possível adicionar esse Produto!',
+    produtoInexistente: 'Esse produto não existe!',
+    apenasNumeroInteiros: 'Apenas números inteiros',
 
     //pedido
     carrinhoVazio: 'Carrinho está vázio, adicione um produto!',

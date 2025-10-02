@@ -57,6 +57,7 @@ const listaProdutoCategoria = (data) => {
         if (!produtosPorCategoria[produto.categoria]) {
             produtosPorCategoria[produto.categoria] = [];
         }
+
         produtosPorCategoria[produto.categoria].push(produto);
     });
 
@@ -189,6 +190,7 @@ const listProdutoCarrinho = async () => {
         const data = dataGetCarrinho.data;
 
         document.querySelector('#carrinho').innerHTML = '';
+
         if (data.length === 0) {
             document.querySelector('#valueTotal').textContent = `Valor Total: $0,00`;
             document.querySelector('#qtd-itens-car').textContent = ``;
@@ -279,12 +281,10 @@ const sendUpdateQtdCarrinho = async (idProduto, qtdUpdate) => {
 
         const data = await updateCarrinho(payload);
 
+        boxMessage(data.message, data.status);
         if (data.status === 200) {
-            boxMessage(data.message, data.status);
             listProdutoCarrinho();
-        } else {
-            boxMessage(data.message, data.status);
-        }
+        } //to do:
     } catch (error) {
         boxMessage(error.response.data.message, error.response.data.status);
     }
@@ -294,13 +294,12 @@ const sendDeleteCarrinhoProduto = async (produtoDelete) => {
     try {
         const data = await deleteCarrinhoProduto(produtoDelete);
 
+        boxMessage(data.message, data.status);
+
         if (data.changes !== 0) {
-            boxMessage(data.message, data.status);
             listProdutoCarrinho();
             carrinhoContagem = {};
-        } else {
-            boxMessage(data.message, data.status);
-        }
+        } //to do:
     } catch (error) {
         boxMessage(error.response.data.message, error.response.data.status);
     }
@@ -320,15 +319,13 @@ const postPedido = async () => {
 const sendCriaPedidoCarrinho = async () => {
     try {
         const data = await postPedido();
-        console.log(data);
+
+        boxMessage(data.message, data.status);
 
         if (data.status === 201 || data.status === 200) {
-            boxMessage(data.message, data.status);
             document.getElementById('cartModal').style.display = 'none';
             carregaProdutosCategoria();
-        } else {
-            boxMessage(data.message, data.status);
-        }
+        } //to do:
     } catch (error) {
         boxMessage(error.response.data.message, error.response.data.status);
     }

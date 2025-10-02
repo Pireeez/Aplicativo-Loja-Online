@@ -41,19 +41,13 @@ const boxMessage = (message, status) => {
     const box = document.getElementById('sucessBox');
     const msg = document.getElementById('exibe-message');
 
-    if (status === 201 || status === 200) {
-        box.classList.add('sucess');
-        msg.textContent = `${message}`;
-        setTimeout(() => {
-            box.classList.remove('sucess');
-        }, 3000);
-    } else {
-        box.classList.add('error');
-        msg.textContent = `${message}`;
-        setTimeout(() => {
-            box.classList.remove('error');
-        }, 3000);
-    }
+    const res = status === 201 || 200 ? 'sucess' : 'error';
+
+    box.classList.add(res);
+    msg.textContent = `${message}`;
+    setTimeout(() => {
+        box.classList.remove(res);
+    }, 3000);
 };
 
 //limitaCaracter
@@ -76,24 +70,12 @@ const formataPreco = (preco) => {
 
 //formata Status para visível ou invisível
 const formataStatus = (status) => {
-    if (status === 1 || status === true) {
-        return (status = 'Visível');
-    }
-
-    if (status === 0 || status === false) {
-        return (status = 'Invisível');
-    }
+    return status ? 'Visível' : 'Invisível';
 };
 
 //formata cor de visível = green / invisível = red pela classname
 const formataCor = (statusCor) => {
-    if (statusCor === 1 || statusCor === true) {
-        return 'status-color-green';
-    }
-
-    if (statusCor === 0 || statusCor === false) {
-        return 'status-color-red';
-    }
+    return statusCor ? 'status-color-green' : 'status-color-red';
 };
 
 //pega arquivo de imagem e exibe na tela e converte para envio de dados
@@ -152,3 +134,17 @@ window.addEventListener('click', (e) => {
         cartModal.style.display = 'none';
     }
 });
+
+function mascaraMoeda(event) {
+    const input = event.target;
+    let value = input.value.replace(/\D/g, '');
+
+    value = value.padStart(3, '0');
+
+    const digitsFloat = value.slice(0, -2) + '.' + value.slice(-2);
+
+    input.value = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    }).format(digitsFloat);
+}
